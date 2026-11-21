@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내집마련 정보 입력 도우미</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{
+  /* layout: one column, sticky progress bar, accordion inputs, then live judgement panels */
+  --bg:#f3f6f5; --surface:#ffffff; --ink:#1a2421; --muted:#5a6a65; --line:#d6dfdc;
+  --accent:#1d6b58; --accent-ink:#ffffff; --soft:#e2efeb; --warn:#8f4a12; --warnbg:#fbece0;
+  --danger:#a32a2a; --okbg:#dcefe8; --tribg:#f8ecc9; --tri:#7a5a05; --nobg:#f6dcdc;
+  --font:'Noto Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121917; --surface:#1b2421; --ink:#e6eeeb; --muted:#9db0aa; --line:#2f3d39;
+    --accent:#58b79e; --accent-ink:#0c1512; --soft:#22342f; --warn:#f0b27a; --warnbg:#33261a;
+    --danger:#ff9a9a; --okbg:#1f3a32; --tribg:#3b3216; --tri:#f0d27a; --nobg:#412222; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121917; --surface:#1b2421; --ink:#e6eeeb; --muted:#9db0aa; --line:#2f3d39;
+  --accent:#58b79e; --accent-ink:#0c1512; --soft:#22342f; --warn:#f0b27a; --warnbg:#33261a;
+  --danger:#ff9a9a; --okbg:#1f3a32; --tribg:#3b3216; --tri:#f0d27a; --nobg:#412222; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 80px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0 10px;border-bottom:1px solid var(--line)}
+header.top .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+h1{font-size:19px;margin:0;font-weight:700;text-wrap:balance}
+.saved{font-size:12px;color:var(--muted);white-space:nowrap}
+.bar{height:8px;background:var(--soft);border-radius:99px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.pct{font-size:13px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.notice{margin:14px 0;padding:12px 14px;background:var(--warnbg);color:var(--warn);border-radius:10px;font-size:14px}
+.notice b{display:block;margin-bottom:2px}
+details.sec{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:10px 0}
+details.sec>summary{list-style:none;cursor:pointer;padding:14px 16px;min-height:52px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:700}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:'';width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin-left:6px;transition:transform .15s}
+details.sec[open]>summary::after{transform:rotate(-135deg)}
+.badge{font-size:12px;font-weight:500;padding:2px 9px;border-radius:99px;background:var(--soft);color:var(--accent);font-variant-numeric:tabular-nums;margin-left:auto}
+.badge.done{background:var(--accent);color:var(--accent-ink)}
+.sbody{padding:2px 16px 16px;display:grid;gap:12px}
+.grid2{display:grid;gap:12px}
+@media (min-width:640px){.grid2{grid-template-columns:1fr 1fr}}
+.fld{display:grid;gap:5px;font-size:14px}
+.fld>span{color:var(--muted);font-weight:500}
+.in{display:flex;align-items:center;gap:8px}
+.in em{font-style:normal;color:var(--muted);font-size:14px;white-space:nowrap}
+input[type=text],input[type=date],input[type=month],select,textarea{width:100%;max-width:100%;min-width:0;min-height:48px;padding:10px 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px}
+input[type=date],input[type=month]{-webkit-appearance:none;appearance:none}
+input[type=range]{width:100%;accent-color:var(--accent);min-height:36px}
+textarea{min-height:110px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.chk{display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px}
+.chk input{width:22px;height:22px;accent-color:var(--accent)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.rowcard{border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:10px;background:var(--bg)}
+.rowcard .grid2{gap:10px}
+.todo{display:grid;grid-template-columns:auto 1fr;gap:8px 10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg)}
+.todo input[type=checkbox]{width:24px;height:24px;accent-color:var(--accent)}
+.todo .sub{grid-column:1/-1;display:flex;gap:8px}
+.todo.done input[type=text]{text-decoration:line-through;color:var(--muted)}
+button{font:inherit;min-height:48px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+button.small{min-height:40px;padding:0 12px;font-size:14px}
+button.del{color:var(--danger)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.tile small{display:block;color:var(--muted);font-size:12px}
+.tile b{font-size:17px;font-variant-numeric:tabular-nums}
+.tile .sub{font-size:12px;color:var(--muted);display:block}
+.actions{display:grid;gap:10px;margin:14px 0}
+@media (min-width:640px){.actions.three{grid-template-columns:repeat(3,1fr)}}
+.out{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}
+.out textarea{min-height:320px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.5}
+.msg{font-size:14px;color:var(--accent);min-height:22px;margin:6px 0}
+.msg.err{color:var(--danger)}
+.confirm{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:12px;display:grid;gap:10px}
+.confirm .btns{display:flex;gap:8px;flex-wrap:wrap}
+h2{font-size:16px;margin:26px 0 4px}
+.sr{position:absolute;left:-9999px}
+/* judgement */
+.mk{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:99px;font-weight:700;font-size:14px;flex:none}
+.mk.o{background:var(--okbg);color:var(--accent)}
+.mk.t{background:var(--tribg);color:var(--tri)}
+.mk.x{background:var(--nobg);color:var(--danger)}
+.mk.n{background:var(--soft);color:var(--muted)}
+.jcard{border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:10px;background:var(--bg)}
+.jcard h3{margin:0;font-size:15px}
+.jcols{display:grid;gap:10px}
+details.jl{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;margin:8px 0 0}
+details.jl>summary{cursor:pointer;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;min-height:36px;list-style:none}
+details.jl>summary::-webkit-details-marker{display:none}
+details.jl .why{margin-top:8px}
+.mkb{min-width:44px;min-height:44px;padding:0;border:0;background:none;position:relative;display:inline-flex;align-items:center;justify-content:center;border-radius:10px}
+.mkb::after{content:'';position:absolute;right:5px;top:7px;width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.8}
+.mkb[aria-expanded=true]{outline:2px solid var(--accent)}
+#pop{position:fixed;z-index:1000;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.35);padding:12px;overflow:auto;font-size:13px;display:none}
+#pop .phd{display:flex;gap:8px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+#pop .pclose{min-height:44px;min-width:44px;padding:0;font-size:20px;line-height:1;flex:none;margin:-8px -8px 0 0}
+#pop .pnote{margin:0 0 8px;padding:6px 8px;border-radius:8px;background:var(--tribg);color:var(--tri);font-size:12px}
+#pop details summary{cursor:pointer;min-height:36px;display:flex;align-items:center;color:var(--muted)}
+#pop .ex{margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid var(--line,#e5e5e5)}
+#pop .ex p{margin:0 0 6px;line-height:1.55}
+#pop .exh{display:flex;gap:6px;font-size:15px}
+#pop .exs{font-size:12px;color:var(--muted);margin:8px 0 2px;font-weight:600}
+#pop .src a{display:inline-block;margin:2px 8px 2px 0}
+#pop .pgo{margin-top:10px;width:100%}
+.sumtbl th,.sumtbl td{text-align:center}.sumtbl th:first-child,.sumtbl td:first-child{text-align:left}
+@media (min-width:640px){.jcols{grid-template-columns:1fr 1fr}}
+.jcell{border-radius:8px;padding:10px;background:var(--surface);border:1px solid var(--line)}
+.jcell .hd{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;margin-bottom:6px}
+.why{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:13px}
+.why li{display:flex;gap:6px;align-items:flex-start}
+.why li .d{flex:none;width:16px;text-align:center;font-weight:700}
+.why .l-o .d{color:var(--accent)}.why .l-t .d{color:var(--tri)}.why .l-x .d{color:var(--danger)}.why .l-n .d{color:var(--muted)}
+.why .l-n,.why .l-o{color:var(--muted)}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tblwrap{overflow-x:auto}
+table.tbl th,table.tbl td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+table.tbl th{color:var(--muted);font-weight:500;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--soft);color:var(--accent)}
+.pill.warn{background:var(--tribg);color:var(--tri)}
+.pill.no{background:var(--nobg);color:var(--danger)}
+a{color:var(--accent)}
+.src{font-size:12px;color:var(--muted)}
+.src a{margin-right:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="row"><h1>내집마련 정보 입력 도우미</h1><span class="saved" id="savedAt">저장 대기</span></div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barWrap"><i id="barFill"></i></div>
+    <div class="pct" id="pctTxt">입력 0%</div>
+  </header>
+
+  <div class="notice">
+    <b>참고용입니다. 실제 자격은 입주자 모집공고문과 기관 심사가 우선합니다.</b>
+    모든 판정과 계산은 추정이며, 규정 기준일은 <span id="asOfTxt"></span>입니다. 주민번호·계좌번호·카드번호는 입력하지 마세요. 입력값은 이 기기의 브라우저에만 저장됩니다.
+  </div>
+
+  <label class="fld" style="margin-bottom:6px">
+    <span>입력 기준일</span>
+    <input type="date" id="asOf" data-w="root" data-k="asOf">
+  </label>
+
+  <main id="sections"></main>
+
+  <h2>자동 계산 (두 분 합산)</h2>
+  <div class="tiles" id="tiles"></div>
+
+  <h2>판정 결과 (추정)</h2>
+  <p class="hint">입력을 바꾸면 바로 다시 계산됩니다. ○ 충족 가능, △ 경계선·확인 필요, ✕ 미충족, – 참고.</p>
+  <div id="judge"></div>
+
+  <div class="actions">
+    <button class="primary" id="btnBuild" type="button">정리본 만들기</button>
+  </div>
+  <div class="out" id="outBox" hidden>
+    <textarea id="outTxt" readonly aria-label="정리본"></textarea>
+    <div class="actions" style="margin-bottom:0">
+      <button class="primary" id="btnCopy" type="button">복사하기</button>
+    </div>
+    <div class="msg" id="copyMsg" role="status"></div>
+  </div>
+
+  <h2>백업과 초기화</h2>
+  <p class="hint">브라우저를 바꾸거나 기록이 지워져도 이어 쓸 수 있게 JSON 파일로 저장해 두세요.</p>
+  <div class="actions three">
+    <button type="button" id="btnSave">파일로 저장(JSON)</button>
+    <button type="button" id="btnLoad">불러오기</button>
+    <button type="button" id="btnReset" class="del">초기화</button>
+  </div>
+  <input type="file" id="fileIn" accept=".json,application/json" class="sr" tabindex="-1" aria-label="JSON 파일 선택">
+  <div id="resetBox"></div>
+  <div class="msg" id="bkMsg" role="status"></div>
+</div>
+
+<script>
+/* ============================================================
+   규정 데이터 RULES (만 원 단위). 값만 바꾸면 판정이 갱신됩니다.
+   기준일 2026-11-21. 확인하지 못한 값은 숫자를 넣지 않고 "미확인"으로 둡니다.
+   ============================================================ */
+const RULES={
+  asOf:'2026-11-21',
+  /* LH 청약플러스 공공분양(일반) 안내, 2026년도 적용 */
+  monthly100:{p3:7533763,p4:8802202,p5:9326985},            // 원, 도시근로자 가구당 월평균소득 100%
+  pct:{
+    newlywed:{first:[100,120],second:[130,140],entry:[130,200]},   // [외벌이, 맞벌이], 공공주택 특별법 시행규칙 별표 6
+    firstTime:{first:[100,120],second:[130,140],entry:[130,200]},
+    general:{first:[100,140]}                                       // LH 안내 표
+  },
+  asset:{land:21550,car:4542},                                // 부동산 215,500천원, 자동차 45,420천원
+  firstTime:{savings:600,taxYears:5},                         // 국민주택: 저축액 600만 원 이상, 소득세 5년 이상 납부
+  cheong:{months:12,count:12},                                // 의정부우정 A-2 공고 기준(블로그 요약). 전형별 공식 수치는 미확인
+  didimdol:{newlywed:8500,firstTime:7000,general:6000,maxLoanNewlywed:40000,ltv:0.70,priceCap:50000,netAsset:51100,rateMin:2.40,rateMax:4.15},
+  gift:{basic:5000,marriage:10000,windowMonths:24,filingMonths:3,credit:0.03,
+        brackets:[[10000,0.10,0],[50000,0.20,1000],[100000,0.30,6000],[300000,0.40,16000],[Infinity,0.50,46000]]},
+  acqTax:{cap:200,price:120000,proposedYouthCap:300},
+  strat:{refTotal:[1200,1500],monthlyCap:25,woo59:[40419,40646]}   // 사례 당첨선(만 원, 보도), 월 인정 한도(만 원), 의정부우정 A-2 59㎡ 분양가
+};
+const U={
+  lh:{t:'LH 청약플러스 공공분양 안내',u:'https://lh.or.kr/menu.es?mid=a10402010100'},
+  law6:{t:'공공주택 특별법 시행규칙 별표 6(개정 2026.6.22)',u:'https://www.law.go.kr/LSW/flDownload.do?flSeq=168411041'},
+  first:{t:'생애최초 주택 특별공급 운용지침(국토부고시 제2026-360호)',u:'https://www.law.go.kr/LSW/flDownload.do?flSeq=167007565'},
+  r114:{t:'디딤돌대출 소득 기준(리얼터114)',u:'https://r114.com/trends/wiki/finance/34b4a6fa-284b-80dc-9654-dd4cd8e31b2d'},
+  kb:{t:'디딤돌대출 순자산 기준(KB Think)',u:'https://kbthink.com/loan/find/didimdol-loan.html'},
+  tn:{t:'신혼부부 디딤돌 한도·금리(블로그)',u:'https://www.tndlrs.com/2026/08/newlyweddidimdolloan.html'},
+  pre:{t:'신혼부부 예비부부 대출 요건(베이비뉴스)',u:'https://www.ibabynews.com/contents/wedding-newlywed-housing-loans'},
+  bogeum:{t:'보금자리론 결혼 페널티 완화(SBS)',u:'https://biz.sbs.co.kr/amp/article/20000337023'},
+  dream:{t:'청년 주택드림 대출 조건(KB Think)',u:'https://kbthink.com/loan/find/dream-housing-loan.html'},
+  hana:{t:'청년주택드림 연계 요건(하나은행)',u:'https://kebhana.com/cont/mall/mall08/mall0802/mall080203/1420296_115198.jsp'},
+  taxdel:{t:'혼인 증여재산공제(세무회계 환희)',u:'https://taxdelight.co.kr/blog/14608/'},
+  pwc:{t:'증여세 가이드(삼일PwC)',u:'https://www.pwc.com/kr/ko/insights/issue-brief/samilpwc_gift-tax-parent-child.pdf'},
+  rate:{t:'증여세 세율표(법제처 별표)',u:'https://www.law.go.kr/LSW/flDownload.do?flSeq=160317655'},
+  taxly:{t:'혼인신고 전 증여와 기한 후 신고(세무사 답변)',u:'https://taxly.kr/qna/144233-혼인신고-전-시부모가-부부-각각에게-증여미신고기한-경과--혼인공제-가능-여부와-신고-시기'},
+  acq:{t:'생애최초 취득세 감면(금천구청)',u:'https://www.geumcheon.go.kr/portal/contents.do?key=4561'},
+  acq2:{t:'지방세제 개편안 청년 300만 원 확대(MTN)',u:'https://news.mtn.co.kr/news-detail/2026082608593115058'},
+  s1:{t:'의정부법조타운 S1블록 기관추천 공지(서울시)',u:'https://news.seoul.go.kr/welfare/archives/584554'},
+  s3:{t:'의정부법조타운 S3블록 기관추천 공지(서울시)',u:'https://news.seoul.go.kr/welfare/archives/584559'},
+  hgS1:{t:'호갱노노 의정부법조타운S1BL',u:'https://hogangnono.com/apt/gQo3e'},
+  hgS3:{t:'호갱노노 의정부법조타운S3',u:'https://hogangnono.com/apt/gMhce'},
+  dl:{t:'DL건설 S3BL 수주 기사(매일일보)',u:'http://www.m-i.kr/news/articleView.html?idxno=1318232'},
+  woo:{t:'의정부우정 A2블록(당근 부동산)',u:'https://realty.daangn.com/subscriptions/2441'},
+  woo2:{t:'의정부우정 A-2 공고 요약(블로그)',u:'https://mhb-blog.com/?p=8948'},
+  gob:{t:'의정부 10년 공공임대 무순위(고방)',u:'https://gobang.kr/notices/20794'},
+  /* 당첨 전략 근거 */
+  lawloc:{t:'주택공급에 관한 규칙: 경기도 해당 건설지역 30%·경기도 20% 우선공급(법제처)',u:'https://law.go.kr/LSW/lsLinkCommonInfo.do?lspttninfSeq=123616'},
+  mtn21:{t:'사전청약 거주기간 계산(남양주진접2·성남복정1 지역우선, MTN)',u:'https://news.mtn.co.kr/news-detail/2021080309232891446'},
+  nw0723:{t:'남양주왕숙 A-1·2 본청약 안내(특공·일반 중복신청 가능, 뉴시스)',u:'https://www.newsis.com/view/NISX20250723_0003263601'},
+  nw25:{t:'남양주왕숙 A1 특공 경쟁률·사전청약 포기(뉴시스)',u:'https://www.newsis.com/view/NISX20250806_0003281329'},
+  gj:{t:'고양장항 S-1 공공분양 입주자모집공고문(중복청약 규정)',u:encodeURI('https://files-scs.pstatic.net/2025/07/02/IO9yz7Ynhe/★고양장항_S-1블록_공공분양주택_입주자모집_공고문 (1).pdf')},
+  pj:{t:'파주운정3 A20 공공분양 표준 입주자모집공고문(부부 접수 규정)',u:encodeURI('https://files-scs.pstatic.net/2025/01/07/oyR5JRYTIg/★(241004)_공공분양_표준입주자모집공고문_파주운정3_A20_최종버전 (1).pdf')},
+  korea25:{t:'청약통장 월 납입 인정액 25만 원 상향(정책브리핑)',u:'https://www.korea.kr/news/policyNewsView.do?newsId=148930247'},
+  sbs25:{t:'11월부터 월 납입인정액 10→25만 원(SBS Biz)',u:'https://biz.sbs.co.kr/amp/article/20000193347'},
+  daumTj:{t:'월 25만원씩 5년이면 공공청약 가능(유형별 전략, 다음뉴스)',u:'https://v.daum.net/v/20240927060154708'},
+  daum1200:{t:'공공분양 당첨선 1,200~1,500만 원 보도(머니플러스)',u:'https://v.daum.net/v/YvA37UwMXY'},
+  bw22:{t:'공공분양 일반형 입주자 선정 개편안(비즈워치 2022.11)',u:'https://news.bizwatch.co.kr/article/real_estate/2022/11/28/0005'},
+  bw0902:{t:'사전청약 신혼 특공 당첨 가점(비즈워치 2021.9)',u:'https://news.bizwatch.co.kr/article/real_estate/2021/09/02/0007'},
+  bw0804:{t:'인천계양 쏠림과 총 분양가(비즈워치 2021.8)',u:'https://news.bizwatch.co.kr/article/real_estate/2021/08/04/0011'},
+  econ21:{t:'특별공급 최고경쟁률 240대 1(이코노미스트 2021.8)',u:'https://economist.co.kr/article/view/ecn202108050028'},
+  seoulA2:{t:'서울시 의정부우정 A-2 기관추천 안내(배점기준표·재산세 증빙 안내)',u:'https://news.seoul.go.kr/welfare/archives/582400'}
+};
+/* 화면에 보여줄 규정 목록. st: 확인 / 일부 / 미확인 */
+const RULE_ITEMS=[
+ {g:'소득',l:'월평균소득 100%(원): 3인 이하 7,533,763 / 4인 8,802,202 / 5인 9,326,985',st:'확인',s:['lh']},
+ {g:'소득',l:'신혼부부·생애최초: 입주요건 130%(맞벌이 200%), 1순위 100%(맞벌이 120%), 2순위 130%(맞벌이 140%)',st:'확인',s:['law6','first']},
+ {g:'소득',l:'일반공급: 100%(맞벌이 140%)',st:'확인',s:['lh']},
+ {g:'소득',l:'LH 안내 페이지 안에 신혼 우선공급 80%(맞벌이 100%) 표기가 함께 있어 단지별로 다를 수 있음',st:'일부',s:['lh']},
+ {g:'자산',l:'부동산 2억 1,550만 원 이하, 자동차 4,542만 원 이하(2026년도, 60㎡ 초과 일반공급은 미적용)',st:'확인',s:['lh']},
+ {g:'자산',l:'자동차 가액 산정 방식(세대 합산인지 최고가인지)',st:'미확인',s:[]},
+ {g:'전형',l:'공급 비율: 일반 25%, 신생아 20%, 신혼 10%, 생애최초 15%, 기관추천 15%, 노부모 5%, 다자녀 10%',st:'확인',s:['lh']},
+ {g:'전형',l:'신혼부부: 혼인 7년 이내 또는 6세 이하 자녀. 예비신혼부부는 입주 전까지 혼인사실 증명',st:'확인',s:['law6']},
+ {g:'전형',l:'신혼부부: 청약통장·소득세 납부 연수는 자격 요건이 아니라 점수 항목으로 규정됨(통장은 주택공급규칙 제48조 준용, 세부 수치 미확인)',st:'일부',s:['law6']},
+ {g:'전형',l:'생애최초: 세대원 전원 과거 주택 소유 이력 없음, 혼인 중이거나 미혼 자녀, 통장 제1순위+저축액 600만 원 이상, 소득세 5년 이상 납부, 추첨',st:'확인',s:['law6','first']},
+ {g:'전형',l:'생애최초 1인 가구(혼인·자녀 없음)는 소득 기준 충족 시 신청 가능, 단독세대주는 전용 60㎡ 이하만',st:'확인',s:['first']},
+ {g:'전형',l:'지역우선 거주기간 요건: 자격이 아니라 점수(3년 이상 3점 등)로 규정. 단지별 지역우선 비율은 공고문 확인',st:'일부',s:['law6','woo2']},
+ {g:'전형',l:'재당첨 제한 기간',st:'미확인',s:[]},
+ {g:'전형',l:'전매제한 최대 3년, 수도권 분양가상한제 주택 거주의무 최대 5년',st:'확인',s:['lh']},
+ {g:'대출',l:'디딤돌 소득: 일반 6,000만, 생애최초·2자녀 7,000만, 신혼 8,500만 원 이하',st:'확인',s:['r114']},
+ {g:'대출',l:'디딤돌 순자산 5억 1,100만 원 이하(2026년). 한 출처는 5.06억으로 표기',st:'일부',s:['kb','tn']},
+ {g:'대출',l:'신혼 디딤돌 한도 최대 4억 원, 주택가액 5억 원 이하, 금리 2.40~4.15%(2026.4 기금e든든 기준 인용), LTV 70%',st:'일부',s:['tn','dream']},
+ {g:'대출',l:'예비신혼: 대출 접수일 3개월 이내 결혼 예정을 증명하고, 실행 후 3개월 이내 혼인신고(은행별 확인)',st:'일부',s:['pre']},
+ {g:'대출',l:'보금자리론: 2026.10.19부터 신혼부부 합산소득이 기준을 넘어도 부부 중 1인 소득 7,000만 원 이하면 이용 가능',st:'확인',s:['bogeum']},
+ {g:'대출',l:'디딤돌 소득 기준 완화(결혼 페널티 해소)의 시행 여부와 내용',st:'미확인',s:[]},
+ {g:'대출',l:'혼인 전 단독 신청 시 디딤돌 한도, 일반 은행 주담대 규제(LTV·DSR)',st:'미확인',s:[]},
+ {g:'대출',l:'청년주택드림 대출: 드림통장 가입 1년 이상·1천만 원 이상 납입, 당첨 시 만 39세 이하 무주택 세대주',st:'일부',s:['hana','dream']},
+ {g:'전략',l:'청약통장 월 납입 인정 한도 25만 원(2024.11.1 납입분부터)',st:'확인',s:['korea25','sbs25']},
+ {g:'전략',l:'공공분양 당첨선 저축총액 1,200~1,500만 원대 보도. 단지·지역별 편차가 커서 법조타운 당첨선은 미확인',st:'일부',s:['daum1200']},
+ {g:'전략',l:'신혼 특공은 통장 가입기간·납입횟수 중심, 일반공급은 저축총액(월 납입 인정액) 중심이라는 보도',st:'일부',s:['daumTj']},
+ {g:'전략',l:'경기도 우선공급: 해당 건설지역 30%, 경기도 20%, 나머지 수도권(택지 규모·지역에 따라 해당지역 100%인 사례도 있음). 법조타운 비율은 공고 전 미확인',st:'일부',s:['lawloc','mtn21']},
+ {g:'전략',l:'한 세대 1인 1건 접수·중복청약 처리: 공고마다 다름(고양장항 S-1은 1세대 1명, 파주운정3 A20은 부부 각각 가능하나 중복 당첨 시 선 접수분만 유효)',st:'일부',s:['gj','pj']},
+ {g:'전략',l:'법조타운 S1·S3의 전형별 공급 세대수, 배점표, 지역우선 비율, 일반공급 당첨선, 당첨자 발표일, 재당첨 제한',st:'미확인',s:[]},
+ {g:'세금',l:'증여재산공제: 직계존속 5,000만 원(10년 합산, 조부모 등과 합산), 혼인 1억 원 추가(혼인신고일 전후 2년, 2024.1.1 이후 증여분)',st:'확인',s:['taxdel','pwc']},
+ {g:'세금',l:'증여세율: 1억 이하 10%, 5억 이하 20%(누진공제 1천만), 10억 이하 30%(6천만), 30억 이하 40%(1.6억), 초과 50%(4.6억)',st:'확인',s:['rate']},
+ {g:'세금',l:'신고기한은 증여일이 속한 달 말일부터 3개월, 기한 내 신고 시 산출세액 3% 공제',st:'일부',s:['pwc']},
+ {g:'세금',l:'혼인신고 전 증여는 혼인신고 후 기한 후 신고로 혼인공제 적용 가능(세무사 답변 사례). 혼인 불발 시 추징 세부 절차',st:'일부',s:['taxly']},
+ {g:'세금',l:'생애최초 취득세 감면: 본인·배우자 무주택, 12억 원 이하, 200만 원 한도(지방세특례제한법 제36조의3). 40세 미만 300만 원 확대는 개편안·발의 단계',st:'일부',s:['acq','acq2']}
+];
+const NOTICES=[
+ {name:'의정부법조타운 S1BL',loc:'경기 의정부시 고산동 698',kind:'LH 공공분양',units:'326세대(호갱노노·리치고). 다른 사이트는 1,448세대로 표기해 확인 필요',
+  plan:'입주자모집공고 11월 말 예정, 청약 12월 중 예정(서울시 공지 2026.11.10 게시)',price:'미공개(공고 전)',status:'공고 전',
+  note:'서울시 장애인 기관추천 6세대: 59A/59AL 3, 59B 1, 74A/74AL 1, 84A 1',cands:['신혼부부 특공(예비신혼 포함)','생애최초 특공','일반공급'],s:['s1','hgS1']},
+ {name:'의정부법조타운 S3BL',loc:'경기 의정부시 고산동',kind:'LH 공공분양, 분양가상한제 적용',units:'544세대, 8개 동 최고 25층',
+  plan:'입주자모집공고 11월 말 예정, 청약 12월 중 예정',price:'미공개(공고 전)',status:'공고 전',
+  note:'서울시 장애인 기관추천 8세대: 59A 4, 59B 2, 81A 1, 81B 1',cands:['신혼부부 특공(예비신혼 포함)','생애최초 특공','일반공급'],s:['s3','hgS3','dl']},
+ {name:'의정부우정 A-2BL(참고용)',loc:'경기 의정부시 녹양동',kind:'LH 공공분양 본청약',units:'463세대(59A 348, 59B 115)',
+  plan:'접수 9.7~9.17 종료, 당첨 10.8, 계약 12.10~12.15, 입주 2029.5 예정',price:'59㎡ 약 4억 원대(4.04~4.06억 표기)',status:'접수 종료',
+  note:'법조타운 59㎡ 분양가를 가늠하는 비교 자료. 의정부시 거주자 우선 공급',cands:[],s:['woo','woo2']},
+ {name:'의정부고산 S-1BL 등 10년 공공임대(참고용)',loc:'의정부 고산동·낙양동',kind:'공공임대(10년) 무순위',units:'고산 S-1BL 51.96㎡ 30호 포함',
+  plan:'접수 8.11~8.12 종료, 당첨 8.26',price:'임대(보증금·월세)',status:'접수 종료',note:'분양이 아닌 임대',cands:[],s:['gob']}
+];
+const DOCS=[
+ {g:'공통(당첨 후 제출 서류, 공고문 우선)',items:[
+  ['주민등록표 등본·초본(세대 전원, 주소 변동 이력 포함)','정부24'],
+  ['가족관계증명서(상세)','정부24'],
+  ['건강보험자격득실확인서','국민건강보험공단'],
+  ['소득 증빙(재직증명서, 근로소득원천징수영수증, 건강보험료 납부확인서)','회사, 홈택스, 건강보험공단'],
+  ['지방세 세목별 과세증명서(재산세 주택분). 서울시 안내문은 최근 10년분 요구','위택스, 정부24'],
+  ['부동산·자동차 보유 확인서류(자산 심사)','정부24, 자동차 민원'],
+  ['청약통장 순위확인서','청약홈 또는 은행']]},
+ {g:'신혼부부 특공(예비신혼 포함)',items:[
+  ['혼인관계증명서(혼인 후) 또는 예비신혼은 입주 전 혼인관계증명서 제출 의무','정부24'],
+  ['예비신혼: 혼인 예정 증빙과 예비배우자 서류(공고문 확인)','공고문']]},
+ {g:'생애최초 특공',items:[
+  ['소득세 납부 사실 증명(5년 이상, 소득금액증명 등)','홈택스'],
+  ['세대원 전원의 주택 소유 이력 확인 서류(과거 소유 이력 포함)','정부24, 주택소유확인']]},
+ {g:'디딤돌 대출',items:[
+  ['예비신혼: 예식장 계약서 또는 청첩장, 실행 후 혼인관계증명서와 배우자 등재 등본','기금e든든, 수탁은행'],
+  ['매매(분양)계약서, 소득 증빙, 주민등록 서류','수탁은행']]},
+ {g:'증여세 신고',items:[
+  ['증여세 과세표준신고 및 자진납부계산서, 증여재산 평가명세서','홈택스'],
+  ['증여 계좌이체 내역, 혼인관계증명서(혼인공제), 가족관계증명서','은행, 정부24']]}
+];
+
+/* ============================================================
+   입력 구조
+   ============================================================ */
+const STORE_KEY='homeprep.blank.v1';
+const SECTIONS=[
+ {id:'basic',title:'1. 여자친구 기본 정보',w:'f',req:['nick','age','curCity','regCity','regDate','household','wedding'],fields:[
+  {k:'nick',l:'이름(별명 가능)',t:'text'},
+  {k:'age',l:'나이',t:'int',u:'세'},
+  {k:'curCity',l:'현재 거주지(시/구)',t:'text'},
+  {k:'regCity',l:'주민등록상 주소지(시/구)',t:'text'},
+  {k:'regDate',l:'현 주소지 전입 연월',t:'month'},
+  {k:'household',l:'부모님과 세대 분리 여부',t:'sel',o:['분리됨','같은 세대','모름']},
+  {k:'hhWith',l:'같은 세대 구성원',t:'text',h:'예: 어머니'},
+  {k:'wedding',l:'혼인 계획일',t:'month'}
+ ]},
+ {id:'housing',title:'2. 여자친구 주거 이력',w:'f',req:['ownHouse','parentHouse','ownHist','@addr'],fields:[
+  {k:'ownHouse',l:'본인 명의 주택 보유 여부',t:'sel',o:['없음','있음']},
+  {k:'parentHouse',l:'부모 명의 주택 보유 여부',t:'sel',o:['없음','있음','모름']},
+  {k:'ownHist',l:'주택을 보유했거나 처분한 이력',t:'text',h:'없으면 "없음"',full:1},
+  {k:'noHome',l:'무주택 기간',t:'text',full:1}
+ ],list:'addr'},
+ {id:'income',title:'3. 여자친구 소득',w:'f',req:['employer','empType','start','contract','nonTax','inc2025','inc2026'],fields:[
+  {k:'employer',l:'직장명',t:'text'},
+  {k:'empType',l:'고용 형태',t:'sel',o:['정규직','계약직','프리랜서·사업','기타']},
+  {k:'start',l:'입사일',t:'date'},
+  {k:'contract',l:'근로계약서상 연봉',t:'num',u:'만 원'},
+  {k:'nonTax',l:'비과세(식대 등) 월액',t:'num',u:'만 원/월',h:'없으면 0'},
+  {k:'inc2025',l:'2025년 총급여(원천징수영수증)',t:'num',u:'만 원'},
+  {k:'inc2026',l:'2026년 예상 총급여',t:'num',u:'만 원'},
+  {k:'taxYears',l:'소득세 납부 통산 연수(입사 전 포함)',t:'dec',u:'년',h:'모르면 비워 두면 입사일로 계산'}
+ ]},
+ {id:'asset',title:'4. 여자친구 자산',w:'f',req:['deposit','stock','car','carOwner','etc'],fields:[
+  {k:'deposit',l:'예금·적금(청약통장 포함)',t:'num',u:'만 원'},
+  {k:'stock',l:'주식·투자',t:'num',u:'만 원'},
+  {k:'car',l:'자동차 차량가액(본인 명의)',t:'num',u:'만 원',h:'없으면 0'},
+  {k:'carOwner',l:'자동차 명의',t:'sel',o:['본인','부모','없음']},
+  {k:'etc',l:'기타 자산(본인 명의)',t:'num',u:'만 원'}
+ ]},
+ {id:'debt',title:'5. 여자친구 부채',w:'f',req:['@debt'],fields:[],check:{k:'noDebt',l:'부채가 없습니다'},list:'debt'},
+ {id:'cheong',title:'6. 여자친구 청약통장',w:'f',req:['bank','kind','open','count','total'],fields:[
+  {k:'bank',l:'은행',t:'text'},
+  {k:'kind',l:'통장 종류',t:'text'},
+  {k:'open',l:'가입 연월',t:'month'},
+  {k:'count',l:'납입 횟수',t:'int',u:'회'},
+  {k:'total',l:'납입 총액',t:'num',u:'만 원'}
+ ]},
+ {id:'support',title:'7. 가족 지원 계획',w:'f',req:['@sup'],fields:[],check:{k:'noSup',l:'가족 지원 계획이 없습니다'},list:'sup'},
+ {id:'todo',title:'8. 앞으로 할 일',w:'f',req:[],fields:[],list:'todo'},
+ {id:'memo',title:'9. 여자친구 메모',w:'f',req:[],fields:[{k:'memo',l:'자유 메모',t:'area',full:1}]},
+ {id:'m1',title:'10. 본인 기본·소득',w:'m',req:['age','regCity','regDate','household','ownHouse','ownHist','employer','start','contract','nonTax','@addrM'],fields:[
+  {k:'nick',l:'이름(별명 가능)',t:'text'},
+  {k:'age',l:'나이',t:'int',u:'세'},
+  {k:'curCity',l:'현재 거주지(시/구)',t:'text'},
+  {k:'regCity',l:'주민등록상 주소지(시/구)',t:'text'},
+  {k:'regDate',l:'현 주소지 전입 연월',t:'month'},
+  {k:'household',l:'부모님과 세대 분리 여부',t:'sel',o:['분리됨','같은 세대','모름']},
+  {k:'ownHouse',l:'본인 명의 주택 보유 여부',t:'sel',o:['없음','있음']},
+  {k:'ownHist',l:'주택 보유·처분 이력',t:'text',h:'없으면 "없음"'},
+  {k:'employer',l:'직장명',t:'text'},
+  {k:'empType',l:'고용 형태',t:'sel',o:['정규직','계약직','프리랜서·사업','기타']},
+  {k:'start',l:'입사일',t:'date'},
+  {k:'contract',l:'근로계약서상 연봉',t:'num',u:'만 원'},
+  {k:'nonTax',l:'비과세(식대 등) 월액',t:'num',u:'만 원/월'},
+  {k:'inc2025',l:'2025년 총급여',t:'num',u:'만 원'},
+  {k:'inc2026',l:'2026년 예상 총급여',t:'num',u:'만 원'},
+  {k:'taxYears',l:'소득세 납부 통산 연수(입사 전 포함)',t:'dec',u:'년',h:'모르면 비워 두면 입사일로 계산'}
+ ],list:'addrM'},
+ {id:'m2',title:'11. 본인 자산·부채·청약통장',w:'m',req:['deposit','stock','car','carOwner','bank','kind','open','count','total','@debtM'],fields:[
+  {k:'deposit',l:'예금·적금',t:'num',u:'만 원'},
+  {k:'stock',l:'주식·투자',t:'num',u:'만 원'},
+  {k:'car',l:'자동차 차량가액(본인 명의)',t:'num',u:'만 원',h:'없으면 0'},
+  {k:'carOwner',l:'이용 중인 차량 명의',t:'sel',o:['본인','부모','없음']},
+  {k:'etc',l:'기타 자산',t:'num',u:'만 원'},
+  {k:'bank',l:'청약통장 은행',t:'text'},
+  {k:'kind',l:'통장 종류',t:'text'},
+  {k:'open',l:'가입 연월',t:'month'},
+  {k:'count',l:'납입 횟수',t:'int',u:'회'},
+  {k:'total',l:'납입 총액',t:'num',u:'만 원'}
+ ],check:{k:'noDebtM',l:'부채가 없습니다'},list:'debtM'},
+ {id:'sc',title:'12. 시나리오 입력',w:'sc',req:['marry','noticeDate','price','city'],fields:[
+  {k:'marry',l:'혼인신고 예정월',t:'month'},
+  {k:'noticeDate',l:'입주자모집공고일(가정)',t:'date',h:'법조타운은 11월 말 예정'},
+  {k:'moveIn',l:'입주 예정월',t:'month',h:'공고 전이라 미공개'},
+  {k:'city',l:'희망 지역(지역우선 판단용)',t:'text'},
+  {k:'price',l:'희망 주택가격',t:'range',min:30000,max:45000,step:500,u:'만 원',full:1},
+  {k:'costPct',l:'부대비용(취득세·중개 등)',t:'dec',u:'%'},
+  {k:'rate',l:'대출 금리(가정)',t:'dec',u:'%'},
+  {k:'years',l:'대출 기간',t:'int',u:'년'},
+  {k:'hhAfter',l:'혼인 후 여자친구 세대',t:'sel',o:['분리 예정','같은 세대 유지']},
+  {k:'applicant',l:'판정표의 신청자',t:'sel',o:['여자친구','본인']},
+  {k:'gfLow',l:'여자친구 연소득 추정 하한',t:'num',u:'만 원',h:'소득 미입력 시 사용'},
+  {k:'gfHigh',l:'여자친구 연소득 추정 상한',t:'num',u:'만 원'},
+  {k:'momLand',l:'어머니 토지 공시가격 합계(추정)',t:'num',u:'만 원',h:''},
+  {k:'momCar',l:'어머니 차량 가액',t:'num',u:'만 원',h:'모르면 비움'}
+ ]}
+];
+const LISTS={
+ addr:{label:'최근 5년 주민등록 주소 이력',add:'주소 추가',cols:[
+   {k:'from',l:'시작',t:'month'},{k:'to',l:'끝',t:'month'},{k:'city',l:'시/군',t:'text'}]},
+ addrM:{label:'최근 5년 주민등록 주소 이력',add:'주소 추가',cols:[
+   {k:'from',l:'시작',t:'month'},{k:'to',l:'끝',t:'month'},{k:'city',l:'시/군',t:'text'}]},
+ debt:{label:'대출 목록',add:'대출 추가',cols:[
+   {k:'type',l:'종류',t:'sel',o:['학자금','신용대출','카드론','기타']},
+   {k:'bal',l:'잔액',t:'num',u:'만 원'},{k:'mon',l:'월 상환액',t:'num',u:'만 원'}]},
+ debtM:{label:'대출 목록',add:'대출 추가',cols:[
+   {k:'type',l:'종류',t:'sel',o:['학자금','신용대출','카드론','기타']},
+   {k:'bal',l:'잔액',t:'num',u:'만 원'},{k:'mon',l:'월 상환액',t:'num',u:'만 원'}]},
+ sup:{label:'지원 내역',add:'지원 추가',cols:[
+   {k:'who',l:'지원자',t:'text'},
+   {k:'to',l:'받는 사람',t:'sel',o:['여자친구','본인']},
+   {k:'amt',l:'금액',t:'num',u:'만 원'},
+   {k:'date',l:'수령 예정월(모르면 비움)',t:'month'},
+   {k:'rep',l:'증여 신고',t:'sel',o:['미정','예정','완료','해당 없음']}]}
+};
+const DEF_TODO=['연봉 서류 확인','주민등록 이전 여부 확인','청약통장 납입 확인','증여 시기 결정','내 집 마련','대출 알아보기'];
+
+/* ============================================================
+   공통 함수
+   ============================================================ */
+const pad=n=>String(n).padStart(2,'0');
+const todayStr=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const nowStr=()=>{const d=new Date();return d.getFullYear()+'.'+pad(d.getMonth()+1)+'.'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const emptyRow=name=>{const o={};LISTS[name].cols.forEach(c=>o[c.k]='');return o};
+const num=v=>{const n=parseInt(String(v==null?'':v).replace(/\D/g,''),10);return isNaN(n)?0:n};
+const flt=v=>{const n=parseFloat(String(v==null?'':v));return isNaN(n)?0:n};
+const has=v=>v!==undefined&&v!==null&&String(v).trim()!=='';
+const comma=n=>Number(n).toLocaleString('en-US');
+const man=v=>comma(num(v))+'만 원';
+const manN=n=>comma(Math.round(n))+'만 원';
+const manBig=n=>n>=10000?comma(Math.round(n))+'만 원 (약 '+(Math.round(n/100)/100)+'억)':comma(Math.round(n))+'만 원';
+const fmtDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?s.replace(/-/g,'.'):s;
+const fmtMonth=s=>{const m=/^(\d{4})-(\d{2})$/.exec(s||'');return m?m[1]+'년 '+parseInt(m[2],10)+'월':(s||'')};
+const cell=s=>String(s).replace(/\|/g,'/').replace(/\s*\n\s*/g,' ').trim();
+const toDate=s=>{if(!has(s))return null;const t=/^\d{4}-\d{2}$/.test(s)?s+'-01':s;const d=new Date(t+'T00:00:00');return isNaN(d.getTime())?null:d};
+const yearsBetween=(a,b)=>(b-a)/(365.25*864e5);
+const addYears=(d,n)=>{const x=new Date(d.getTime());x.setFullYear(x.getFullYear()+n);return x};
+const fmtD=d=>d.getFullYear()+'.'+pad(d.getMonth()+1)+'.'+pad(d.getDate());
+const ymIdx=s=>{const m=/^(\d{4})-(\d{2})/.exec(s||'');return m?parseInt(m[1],10)*12+parseInt(m[2],10)-1:null};
+const idxStr=i=>Math.floor(i/12)+'-'+pad(i%12+1);
+const lastDayOfIdx=i=>{const y=Math.floor(i/12),m=i%12;return new Date(y,m+1,0)};
+
+const SEED=()=>blankState();
+const blankState=()=>({
+  asOf:todayStr(),f:{},m:{},addr:[emptyRow('addr')],addrM:[emptyRow('addrM')],debt:[],debtM:[],sup:[],
+  todo:DEF_TODO.map(t=>({t,due:'',done:false})),noDebt:false,noSup:false,noDebtM:false,
+  sc:{marry:'',noticeDate:todayStr(),moveIn:'',city:'의정부시',price:'40000',costPct:'1.5',rate:'3.9',years:'30',
+      hhAfter:'분리 예정',applicant:'여자친구',gfLow:'',gfHigh:'',momLand:'',momCar:''}
+});
+function sanitize(obj){
+  const d=blankState();
+  if(!obj||typeof obj!=='object')return d;
+  if(typeof obj.asOf==='string')d.asOf=obj.asOf;
+  ['f','m','sc'].forEach(w=>{
+    if(obj[w]&&typeof obj[w]==='object')Object.keys(obj[w]).forEach(k=>{d[w][k]=String(obj[w][k])});
+  });
+  Object.keys(LISTS).forEach(n=>{
+    if(Array.isArray(obj[n])){
+      d[n]=obj[n].map(r=>{const o=emptyRow(n);Object.keys(o).forEach(k=>{if(r&&r[k]!=null)o[k]=String(r[k])});return o});
+    }
+  });
+  if(Array.isArray(obj.todo))d.todo=obj.todo.map(t=>({t:String(t&&t.t||''),due:String(t&&t.due||''),done:!!(t&&t.done)}));
+  d.noDebt=!!obj.noDebt;d.noSup=!!obj.noSup;d.noDebtM=!!obj.noDebtM;
+  return d;
+}
+const store=(st,w)=>w==='m'?st.m:w==='sc'?st.sc:st.f;
+
+function listFilled(arr){return arr.some(r=>Object.keys(r).some(k=>k!=='done'&&String(r[k]).trim()!==''))}
+function filledKey(k,st,w){
+  if(k[0]==='@'){
+    const n=k.slice(1);
+    if(n==='debt')return st.noDebt||listFilled(st.debt);
+    if(n==='debtM')return st.noDebtM||listFilled(st.debtM);
+    if(n==='sup')return st.noSup||listFilled(st.sup);
+    return listFilled(st[n]);
+  }
+  return has(store(st,w)[k]);
+}
+function progress(st){
+  const secs=SECTIONS.map(s=>({id:s.id,total:s.req.length,done:s.req.filter(k=>filledKey(k,st,s.w)).length}));
+  const total=secs.reduce((a,s)=>a+s.total,0),done=secs.reduce((a,s)=>a+s.done,0);
+  return {secs,total,done,pct:total?Math.round(done/total*100):0};
+}
+
+/* 소득: 총급여(비과세 제외), 만 원. 모르면 null */
+function pInc(pf){
+  if(has(pf.inc2026))return num(pf.inc2026);
+  if(has(pf.contract))return Math.max(num(pf.contract)-num(pf.nonTax)*12,0);
+  return null;
+}
+function calcP(pf,debts){
+  const assets=num(pf.deposit)+num(pf.stock)+num(pf.car)+num(pf.etc);
+  const d=debts.reduce((a,r)=>a+num(r.bal),0),mon=debts.reduce((a,r)=>a+num(r.mon),0);
+  const inc=pInc(pf);
+  return {assets,debts:d,net:assets-d,monthly:mon,inc};
+}
+function calc(st){
+  const f=calcP(st.f,st.debt),m=calcP(st.m,st.debtM);
+  const fl=num(st.sc.gfLow),fh=num(st.sc.gfHigh);
+  const fInc=f.inc!=null?[f.inc,f.inc]:[fl,fh];
+  const mInc=m.inc!=null?m.inc:0;
+  return {f,m,assets:f.assets+m.assets,debts:f.debts+m.debts,net:f.net+m.net,monthly:f.monthly+m.monthly,
+          incLow:mInc+fInc[0],incHigh:mInc+fInc[1],incKnown:f.inc!=null&&m.inc!=null,fRange:f.inc==null,
+          fInc,mInc,mUnknown:m.inc==null};
+}
+
+/* ============================================================
+   판정
+   ============================================================ */
+const RANK={o:0,t:1,x:2,n:-1};
+const worst=cs=>{let w='o';cs.forEach(c=>{if(RANK[c.m]>RANK[w])w=c.m});return w};
+function ratioInfo(incSum,earners,base){
+  const monthly=incSum*10000/12;
+  return {monthly:Math.round(monthly/10000),ratio:monthly/base*100};
+}
+/* mode: 'couple'(부부 합산) | 'm'(본인 단독) | 'f'(여자친구 단독) */
+function incomeCheck(type,mode,mInc,fInc){
+  const R=RULES,base=R.monthly100.p3;
+  const couple=mode==='couple';
+  let incSum,earn=false;
+  if(couple){incSum=(mInc||0)+(fInc||0);earn=(mInc>0)&&(fInc>0)}
+  else incSum=mode==='f'?fInc:mInc;
+  const ri=ratioInfo(incSum,earn,base);
+  const who=couple?'부부 합산':mode==='f'?'여자친구 단독':'본인 단독';
+  const lbl=who+' 총급여 '+comma(incSum)+'만 원, 월 '+ri.monthly+'만 원(월평균 '+Math.round(ri.ratio)+'%)';
+  const dd={type,who,sum:comma(incSum),monthly:String(ri.monthly),pct:String(Math.round(ri.ratio)),earn};
+  if(type==='general'){
+    const lim=R.pct.general.first[earn?1:0],cp=comma(Math.round(base*lim/100/10000));
+    dd.lim=String(lim);dd.cap=cp;dd.tier=ri.ratio<=lim?'first':'over';
+    return ri.ratio<=lim?{m:'o',t:lbl+' ≤ '+lim+'%',k:'income',d:dd}:{m:'x',t:lbl+' > '+lim+'% 한도('+cp+'만 원/월)',k:'income',d:dd};
+  }
+  const pc=R.pct[type],i=earn?1:0;
+  const f1=pc.first[i],s2=pc.second[i],en=pc.entry[i];
+  const cap=x=>comma(Math.round(base*x/100/10000))+'만 원/월';
+  Object.assign(dd,{f1:String(f1),s2:String(s2),en:String(en),cap1:cap(f1),capEn:cap(en)});
+  if(ratio_le(ri.ratio,f1)){dd.tier='first';return {m:'o',t:lbl+' ≤ 1순위 '+f1+'%('+cap(f1)+')'+(earn?', 맞벌이 기준':''),k:'income',d:dd}}
+  if(ratio_le(ri.ratio,s2)){dd.tier='second';return {m:'t',t:lbl+', 1순위 '+f1+'% 초과이고 2순위 '+s2+'% 이내',k:'income',d:dd}}
+  if(ratio_le(ri.ratio,en)){dd.tier='entry';return {m:'t',t:lbl+', 순위 밖이지만 입주요건 '+en+'% 이내',k:'income',d:dd}}
+  dd.tier='over';return {m:'x',t:lbl+' > 입주요건 '+en+'%('+cap(en)+')',k:'income',d:dd};
+}
+const ratio_le=(a,b)=>a<=b+1e-9;
+/* 소득 참고 줄: 본인·여자친구·합산을 모두 보여줌 */
+function incomeRef(mInc,fInc){
+  const base=RULES.monthly100.p3;
+  const one=(n,v)=>v==null?n+' 미입력':n+' '+comma(v)+'만 원('+Math.round(ratioInfo(v,false,base).ratio)+'%)';
+  const sum=(mInc==null||fInc==null)?null:mInc+fInc;
+  return {m:'n',t:'소득 참고(월평균 대비): '+one('본인',mInc)+' · '+one('여자친구',fInc)+' · '+(sum==null?'합산 미입력':'합산 '+comma(sum)+'만 원('+Math.round(ratioInfo(sum,false,base).ratio)+'%)')};
+}
+
+/* line: 'couple'(예비신혼 합산) | 'm' | 'f' | 'post'(혼인 후 합산) */
+function assetChecks(st,line){
+  const S=st.sc,f=st.f,m=st.m,R=RULES.asset,out=[];
+  const momIn=line==='f'||line==='couple'?String(f.household||'')==='같은 세대':line==='post'?String(S.hhAfter||'').indexOf('유지')>=0:false;
+  const land=momIn?num(S.momLand):0;
+  const mom=momIn?'(어머니 토지 세대 포함 가정)':'(어머니 자산 미포함)';
+  const ld={land:comma(land),limit:comma(R.land),mom:momIn};
+  if(land>R.land)out.push({m:'x',t:'부동산 '+comma(land)+'만 원 > 한도 '+comma(R.land)+'만 원'+mom,k:'land',d:ld});
+  else if(land>=R.land*0.9)out.push({m:'t',t:'부동산 '+comma(land)+'만 원, 한도 '+comma(R.land)+'만 원에 근접'+mom,k:'land',d:ld});
+  else out.push({m:'o',t:'부동산 '+comma(land)+'만 원 ≤ 한도 '+comma(R.land)+'만 원'+mom,k:'land',d:ld});
+  const cars=line==='m'?[num(m.car)]:line==='f'?[num(f.car)]:[num(m.car),num(f.car)];
+  let carNote=momIn?'':'';
+  if(momIn){
+    if(!has(S.momCar)){out.push({m:'t',t:'어머니 차량 가액 미입력(한도 '+comma(R.car)+'만 원)',k:'momCar',d:{limit:comma(R.car)}});return out}
+    cars.push(num(S.momCar));carNote='(어머니 차량 포함)';
+  }
+  const mx=Math.max.apply(null,cars);
+  const cd={mx:comma(mx),limit:comma(R.car),mom:momIn};
+  out.push(mx>R.car?{m:'x',t:'자동차 '+comma(mx)+'만 원 > 한도 '+comma(R.car)+'만 원',k:'car',d:cd}:{m:'o',t:'자동차 '+comma(mx)+'만 원 ≤ 한도 '+comma(R.car)+'만 원'+carNote,k:'car',d:cd});
+  return out;
+}
+function cheongCheck(p,notice,needSavings){
+  const open=toDate(p.open),cnt=num(p.count),tot=num(p.total),R=RULES;
+  const out=[];
+  if(!open||!notice||!has(p.count)){out.push({m:'t',t:'청약통장 가입월·납입횟수 미입력'});}
+  else{
+    const mo=Math.floor(yearsBetween(open,notice)*12);
+    const ok=mo>=R.cheong.months&&cnt>=R.cheong.count;
+    out.push({m:ok?'o':'x',t:'통장 가입 '+mo+'개월, '+cnt+'회 납입(의정부우정 공고 기준 '+R.cheong.months+'개월·'+R.cheong.count+'회, 법조타운 공고에서 재확인)'});
+  }
+  if(needSavings){
+    out.push(tot>=R.firstTime.savings?{m:'o',t:'저축액 '+comma(tot)+'만 원 ≥ '+R.firstTime.savings+'만 원'}:{m:'x',t:'저축액 '+comma(tot)+'만 원 < 생애최초 기준 '+R.firstTime.savings+'만 원'});
+  }
+  return out;
+}
+function taxYearCheck(p,notice){
+  const R=RULES.firstTime;
+  if(has(p.taxYears)){
+    const y=flt(p.taxYears);
+    const dm={manual:true,years:String(y),ok:y>=R.taxYears};
+    return y>=R.taxYears?{m:'o',t:'소득세 납부 통산 '+y+'년 ≥ '+R.taxYears+'년',k:'taxYears',d:dm}:{m:'x',t:'소득세 납부 통산 '+y+'년 < '+R.taxYears+'년',k:'taxYears',d:dm};
+  }
+  const s=toDate(p.start);
+  if(!s||!notice)return {m:'t',t:'입사일 미입력(소득세 5년 요건 확인 불가)',k:'taxStartMissing',d:{}};
+  const y=yearsBetween(s,notice),reach=addYears(s,R.taxYears);
+  const da={manual:false,years:y.toFixed(1),reach:fmtD(reach),ok:y>=R.taxYears};
+  return y>=R.taxYears?{m:'o',t:'입사 후 '+y.toFixed(1)+'년(입사 전 소득 제외 계산)',k:'taxYears',d:da}:{m:'x',t:'입사 후 '+y.toFixed(1)+'년, 5년 도달일 '+fmtD(reach)+'(입사 전 납부 이력이 있으면 통산 연수 입력)',k:'taxYears',d:da};
+}
+const LINES=[['couple','예비신혼 합산'],['m','본인 단독'],['f','여자친구 단독'],['post','혼인신고 후']];
+const TYPES=[['newlywed','신혼부부 특별공급(예비신혼 포함)','신혼'],['firstTime','생애최초 특별공급','생애최초'],['general','일반공급','일반']];
+/* 사람별 청약 정보 줄: 통장, 지역우선(+단절), 생애최초면 저축액·소득세. mark=false면 참고(–) */
+function personRows(st,w,type,mark){
+  const p=w==='m'?st.m:st.f,list=w==='m'?st.addrM:st.addr,nm=w==='m'?'본인':'여자친구';
+  const notice=toDate(st.sc.noticeDate),city=has(st.sc.city)?st.sc.city:'의정부시',R=RULES.cheong;
+  const open=toDate(p.open),cnt=num(p.count),tot=num(p.total),rows=[];
+  if(!open||!notice||!has(p.count))rows.push({m:'t',t:'통장 가입월·납입횟수 미입력',k:'cheongMissing',d:{}});
+  else{
+    const mo=Math.floor(yearsBetween(open,notice)*12),ok=mo>=R.months&&cnt>=R.count;
+    rows.push({m:ok?'o':'x',t:'통장 가입 '+mo+'개월, '+cnt+'회, 총액 '+comma(tot)+'만 원 → 공고 요건('+R.months+'개월·'+R.count+'회) '+(ok?'충족':'미충족')+'(법조타운 공고에서 재확인)',k:'cheong',d:{mo:String(mo),cnt:String(cnt),tot:comma(tot),months:String(R.months),count:String(R.count),ok}});
+  }
+  const rs=residence(p,list,city,notice);
+  const outside=list.filter(r=>has(r.city)&&String(r.city).indexOf(city)<0).length;
+  rows.push({m:rs.m==='x'?'t':rs.m,t:rs.t+(rs.m==='o'?(outside?'. 주소 이력에 타 지역 '+outside+'건 있음, 연속 여부 확인':'. 주소 이력상 단절 없음'):''),k:rs.k,d:Object.assign({},rs.d,{outside:String(outside)})});
+  if(type==='firstTime'){
+    const sd={tot:comma(tot),need:String(RULES.firstTime.savings)};
+    rows.push(tot>=RULES.firstTime.savings?{m:'o',t:'저축액 '+comma(tot)+'만 원 ≥ '+RULES.firstTime.savings+'만 원',k:'savings',d:sd}:{m:'x',t:'저축액 '+comma(tot)+'만 원 < 생애최초 기준 '+RULES.firstTime.savings+'만 원',k:'savings',d:sd});
+    rows.push(taxYearCheck(p,notice));
+  }
+  return rows.map(x=>({m:mark?x.m:'n',t:(mark?'':'(참고) ')+nm+' – '+x.t,k:x.k,d:Object.assign({who:w},x.d)}));
+}
+function evalLine(st,type,line,A,fInc){
+  const S=st.sc,m=st.m,f=st.f,notice=toDate(S.noticeDate),mInc=pInc(m);
+  const checks=[];
+  const single=line==='m'||line==='f';
+  const pre=line!=='post';
+  /* 해당 없음 줄 */
+  if(type==='newlywed'&&single){
+    checks.push({m:'n',t:'단독 세대로는 신혼 특공을 신청할 수 없음(예비신혼은 혼인으로 구성될 세대 기준이라 예비신혼 합산 줄에서 판정)',k:'naSingleNewlywed'});
+    checks.push(incomeRef(mInc,fInc));
+    personRows(st,line,type,false).forEach(c=>checks.push(c));
+    return {m:'n',na:true,checks};
+  }
+  if(type!=='newlywed'&&line==='couple'){
+    checks.push({m:'n',t:type==='general'?'혼인 전 일반공급은 현재 세대 기준이라 합산 판정은 하지 않음(본인·여자친구 단독 줄 참고)':'혼인 전 생애최초는 단독 1인 가구 신청이라 합산 판정은 하지 않음(본인·여자친구 단독 줄 참고)',k:type==='general'?'naCoupleGeneral':'naCoupleFirst'});
+    checks.push(incomeRef(mInc,fInc));
+    ['f','m'].forEach(w=>personRows(st,w,type,false).forEach(c=>checks.push(c)));
+    return {m:'n',na:true,checks};
+  }
+  /* 주택 */
+  const mH=has(m.ownHouse),fH=has(f.ownHouse);
+  if(line==='m'){
+    if(!mH)checks.push({m:'t',t:'본인 주택 보유 여부 미입력',k:'house',d:{who:'m'}});
+    else checks.push(String(m.ownHouse)!=='없음'?{m:'x',t:'본인 명의 주택 보유',k:'house',d:{who:'m'}}:{m:'o',t:'본인 명의 주택 없음',k:'house',d:{who:'m'}});
+  }else if(line==='f'){
+    if(!fH)checks.push({m:'t',t:'여자친구 주택 보유 여부 미입력',k:'house',d:{who:'f'}});
+    else checks.push(String(f.ownHouse)!=='없음'?{m:'x',t:'여자친구 명의 주택 보유',k:'house',d:{who:'f'}}:{m:'o',t:'여자친구 명의 주택 없음',k:'house',d:{who:'f'}});
+  }else{
+    if(!mH||!fH)checks.push({m:'t',t:'주택 보유 여부 미입력',k:'house',d:{who:'both'}});
+    else if(String(m.ownHouse)!=='없음'||String(f.ownHouse)!=='없음')checks.push({m:'x',t:'본인 또는 배우자 명의 주택 보유',k:'house',d:{who:'both'}});
+    else checks.push({m:'o',t:'두 분 모두 본인 명의 주택 없음',k:'house',d:{who:'both'}});
+  }
+  if(line!=='m'&&String(f.parentHouse||'')==='있음'){
+    const sameFather=String(f.hhWith||'').indexOf('아버지')>=0;
+    checks.push(sameFather?{m:'x',t:'같은 세대 아버지 명의 주택 있음',k:'fatherHouse'}:{m:'o',t:'아버지 명의 주택은 세대가 달라 제외(주민등록 세대 분리 확인)',k:'fatherHouse'});
+  }
+  /* 소득 */
+  const mode=single?line:'couple';
+  const need=mode==='m'?mInc==null:mode==='f'?fInc==null:(mInc==null||fInc==null);
+  if(need){const mw=(mode==='m'||(mode==='couple'&&mInc==null))?'m':'f';checks.push({m:'t',t:(mw==='m'?'본인':'여자친구')+' 소득 미입력',k:'incomeMissing',d:{who:mw}})}
+  else checks.push(incomeCheck(type,mode,mInc,fInc));
+  checks.push(incomeRef(mInc,fInc));
+  if(single)checks.push({m:'n',t:'1인 가구 소득 기준은 가구원수별로 따로 있을 수 있어 확인하지 못함(미확인, 3인 이하 기준으로 계산)',k:'singleIncUnknown'});
+  /* 자산 */
+  assetChecks(st,line).forEach(c=>checks.push(c));
+  /* 혼인 요건 */
+  if(type==='newlywed'){
+    if(!pre)checks.push({m:'o',t:'혼인 7년 이내 신혼부부',k:'marriedOk'});
+    else if(!has(S.marry))checks.push({m:'t',t:'혼인 예정월 미입력',k:'marryMissing'});
+    else if(!has(S.moveIn))checks.push({m:'t',t:'예비신혼부부: 입주 전까지 혼인신고 필수(입주 예정월 미공개)',k:'moveInUnknown',d:{marry:fmtMonth(S.marry)}});
+    else checks.push(ymIdx(S.marry)<=ymIdx(S.moveIn)?{m:'o',t:'혼인신고 예정월이 입주 예정월 이전',k:'marryVsMoveIn',d:{marry:fmtMonth(S.marry),moveIn:fmtMonth(S.moveIn)}}:{m:'x',t:'혼인신고 예정월이 입주 예정월보다 늦음',k:'marryVsMoveIn',d:{marry:fmtMonth(S.marry),moveIn:fmtMonth(S.moveIn)}});
+  }else if(type==='firstTime'){
+    if(!pre)checks.push({m:'o',t:'혼인 중(가목)',k:'firstMarried'});
+    else checks.push({m:'t',t:'혼인 전: 1인 가구로 단독 신청(나목), 단독세대주는 전용 60㎡ 이하만',k:'firstSingle'});
+    const own=(line==='m'?m:f).ownHist;
+    if(!has(own)||String(own).indexOf('없')<0)checks.push({m:'t',t:'과거 주택 소유 이력 확인 필요(세대원 전원)',k:'ownHist'});
+  }
+  /* 사람별 청약 정보: 판정 대상 사람은 마크, 나머지는 참고 */
+  const who=single?[line]:[A,A==='m'?'f':'m'];
+  who.forEach((w,i)=>personRows(st,w,type,i===0).forEach(c=>checks.push(c)));
+  return {m:worst(checks),na:false,checks};
+}
+function mergeCells(a,b){
+  const out=[];
+  for(let i=0;i<a.length;i++){
+    const x=a[i],y=b[i]||a[i];
+    if(x.m===y.m){out.push(x.t===y.t?x:{m:x.m,t:x.t+' / 상한 가정: '+y.t.replace(/^소득 참고\(월평균 대비\): /,''),k:x.k,d:x.d,d2:y.d});}
+    else out.push({m:(x.m==='x'&&y.m==='x')?'x':'t',t:'소득 추정 범위에 따라 갈림 → '+x.t+' / '+y.t,k:x.k,d:x.d,d2:y.d,split:true});
+  }
+  return out;
+}
+function mergeLines(a,b){
+  if(a.na)return a;
+  const checks=mergeCells(a.checks,b.checks);
+  return {m:worst(checks),na:false,checks};
+}
+function evalTypes(st){
+  const A=st.sc.applicant==='본인'?'m':'f';
+  const f=pInc(st.f);
+  const lo=f!=null?f:num(st.sc.gfLow),hi=f!=null?f:num(st.sc.gfHigh);
+  const rangeUsed=f==null;
+  const rows=TYPES.map(([k,l,sh])=>{
+    const r={key:k,label:l,short:sh,preLines:{}};
+    LINES.forEach(([L])=>{
+      const one=x=>evalLine(st,k,L,A,x);
+      const cell=(!rangeUsed||lo===hi)?one(f!=null?f:lo):mergeLines(one(lo),one(hi));
+      if(L==='post')r.post=cell;else r.preLines[L]=cell;
+    });
+    /* 기존 호환: pre는 12번 섹션 신청자 선택에 따라 강조되는 줄 */
+    r.focus=k==='newlywed'?'couple':A;
+    r.pre=r.preLines[r.focus];
+    return r;
+  });
+  /* 요약: 줄 × 전형 마크, 전형별 가장 유리한 혼인 전 줄 */
+  const table=LINES.map(([L,lab])=>({line:L,label:lab,marks:rows.map(r=>(L==='post'?r.post:r.preLines[L]).m)}));
+  const sc={o:2,t:1,x:0};
+  const best=rows.map(r=>{
+    let pick=null;
+    ['couple',A,A==='m'?'f':'m'].forEach(L=>{
+      const c=r.preLines[L];if(c.na)return;
+      if(!pick||sc[c.m]>sc[pick.cell.m])pick={line:L,cell:c};
+    });
+    return {key:r.key,short:r.short,line:pick?pick.line:null,m:pick?pick.cell.m:'x',post:r.post.m};
+  });
+  const lab=Object.fromEntries(LINES);
+  const textPre=best.map(b=>b.short+(b.line?'('+lab[b.line]+' '+MARK[b.m]+')':' ✕')).join(' · ');
+  const textPost=rows.map(r=>r.short+' '+MARK[r.post.m]).join(' · ');
+  return {rows,applicant:A,rangeUsed,lo,hi,summary:{table,best,textPre,textPost}};
+}
+function residence(p,list,city,notice){
+  const cur=String(p.regCity||'');
+  if(!has(cur)||!notice)return {m:'t',t:'주민등록 주소지 미입력',k:'resMissing',d:{}};
+  if(cur.indexOf(city)<0){
+    const rd=toDate(p.regDate);
+    const mo=rd?Math.max(Math.floor(yearsBetween(rd,notice)*12),0):null;
+    return {m:'x',t:'주민등록 '+cur+(mo!=null?' 전입 '+mo+'개월':'')+', '+city+' 거주 이력이 끊김(지역우선 불리)',k:'resBroken',d:{cur,mo:mo!=null?String(mo):'',city}};
+  }
+  let earliest=null;
+  list.forEach(r=>{if(String(r.city||'').indexOf(city)>=0&&has(r.from)){const d=toDate(r.from);if(d&&(!earliest||d<earliest))earliest=d}});
+  if(!earliest)earliest=toDate(p.regDate);
+  if(!earliest)return {m:'t',t:city+' 거주 시작월 미입력',k:'resStartMissing',d:{city}};
+  const y=yearsBetween(earliest,notice);
+  return {m:y>=1?'o':'t',t:city+' 거주 약 '+y.toFixed(1)+'년(지역우선 점수 3년 이상 최고)',k:'resOk',d:{city,years:y.toFixed(1)}};
+}
+function applicantCompare(st){
+  const notice=toDate(st.sc.noticeDate),city=has(st.sc.city)?st.sc.city:'의정부시';
+  const out=[];
+  const per=(p,list)=>{
+    const rows=[];
+    rows.push(residence(p,list,city,notice));
+    const cc=cheongCheck(p,notice,true);
+    rows.push(cc[0]);rows.push(cc[1]||{m:'t',t:'저축액 미입력'});
+    rows.push(taxYearCheck(p,notice));
+    rows.push({m:'n',t:'세대: '+(String(p.household||'')==='같은 세대'?'부모와 같은 세대'+(has(p.hhWith)?'('+p.hhWith+')':''):String(p.household||'')==='분리됨'?'부모와 분리':'미입력')});
+    const inc=pInc(p);rows.push({m:'n',t:'총급여 '+(inc==null?'미입력':comma(inc)+'만 원')});
+    return rows;
+  };
+  const labels=['지역우선('+city+')','청약통장 가입·횟수','저축액 600만 원(생애최초)','소득세 5년 납부','세대','총급여'];
+  const mr=per(st.m,st.addrM),fr=per(st.f,st.addr);
+  for(let i=0;i<labels.length;i++)out.push({label:labels[i],m:mr[i],f:fr[i]});
+  const score=r=>[0,2,3].reduce((a,i)=>a+(r[i].m==='o'?1:0),0);
+  const sm=score(mr),sf=score(fr);
+  const verdict=sf>sm?'여자친구 명의 신청이 유리(추정)':sm>sf?'본인 명의 신청이 유리(추정)':'두 사람 차이가 크지 않음(추정)';
+  return {rows:out,verdict,sm,sf};
+}
+const pmt=(r,n,p)=>r===0?p/n:p*r/(1-Math.pow(1+r,-n));
+function loanSim(st){
+  const S=st.sc,D=RULES.didimdol,c=calc(st);
+  const price=num(S.price),cost=Math.round(price*flt(S.costPct)/100);
+  const liquid=num(st.f.deposit)+num(st.f.stock)+num(st.f.etc)+num(st.m.deposit)+num(st.m.stock)+num(st.m.etc);
+  const gifts=st.sup.reduce((a,r)=>a+num(r.amt),0);
+  const fund=liquid+gifts;
+  const need=Math.max(price+cost-fund,0);
+  const limit=Math.min(D.maxLoanNewlywed,Math.round(price*D.ltv));
+  const yrs=Math.max(num(S.years),1),rate=flt(S.rate)/100/12;
+  const pay=pmt(rate,yrs*12,need);
+  const loanBy=need>0?Math.min(need,limit):0;
+  const short=Math.max(need-limit,0);
+  const incTxt=(lim,inc)=>inc<=lim?'o':'x';
+  const iLo=c.incLow,iHi=c.incHigh;
+  const fmtR=(a,b)=>a===b?comma(a)+'만 원':comma(a)+'~'+comma(b)+'만 원';
+  const incMark=(lim)=>{const a=iLo<=lim,b=iHi<=lim;return a&&b?'o':(!a&&!b?'x':'t')};
+  const netAsset=c.net;
+  const dsrLo=iHi>0?pay*12/iHi*100:null,dsrHi=iLo>0?pay*12/iLo*100:null;
+  return {price,cost,liquid,gifts,fund,need,limit,pay,short,iLo,iHi,incRange:fmtR(iLo,iHi),
+    mNewly:incMark(D.newlywed),mFirst:incMark(D.firstTime),mGen:incMark(D.general),
+    mSingle:(function(){const mi=c.mInc;return mi<=D.firstTime?'o':'x'})(),
+    singleInc:c.mInc,netAsset,netOk:netAsset<=D.netAsset,priceOk:price<=D.priceCap,dsrLo,dsrHi,yrs,rate:flt(S.rate)};
+}
+function giftCalc(st){
+  const G=RULES.gift,S=st.sc,marry=ymIdx(S.marry);
+  const groups={};
+  st.sup.forEach(r=>{if(num(r.amt)>0){const k=r.to||'여자친구';(groups[k]=groups[k]||[]).push(r)}});
+  const taxOf=base=>{
+    if(base<=0)return 0;
+    if(base<50)return 0;
+    for(const b of G.brackets){if(base<=b[0])return Math.round(base*b[1]-b[2])}
+    return 0;
+  };
+  return Object.keys(groups).map(to=>{
+    const rows=groups[to].map(r=>{
+      const idx=ymIdx(r.date);
+      const assumed=idx==null;
+      const inWin=assumed?true:(marry!=null&&Math.abs(idx-marry)<=G.windowMonths);
+      const dl=idx!=null?lastDayOfIdx(idx+G.filingMonths):null;
+      return {who:r.who||'(지원자 미입력)',amt:num(r.amt),date:r.date,assumed,inWin,deadline:dl};
+    });
+    const total=rows.reduce((a,r)=>a+r.amt,0);
+    const win=rows.filter(r=>r.inWin).reduce((a,r)=>a+r.amt,0);
+    const basic=Math.min(G.basic,total);
+    const mDed=marry!=null?Math.min(G.marriage,win):0;
+    const baseA=Math.max(total-basic-mDed,0),baseB=Math.max(total-basic,0);
+    const gross=x=>taxOf(x);
+    const net=x=>Math.round(gross(x)*(1-G.credit));
+    return {to,rows,total,basic,mDed,baseA,baseB,taxA:gross(baseA),netA:net(baseA),taxB:gross(baseB),netB:net(baseB),
+      win:marry!=null?{from:idxStr(marry-G.windowMonths),to:idxStr(marry+G.windowMonths)}:null};
+  });
+}
+
+/* ============================================================
+   당첨 전략. 당첨 확률 수치는 만들지 않습니다(공급 세대수·배점표·당첨선이 공고 전이라 알 수 없음).
+   입력값과 근거로 정성 판단만 합니다. lv: law 법령·공고문 / case 사례·보도 / infer 추정
+   ============================================================ */
+const LV={law:'법령·공고',case:'사례·보도',infer:'추정'};
+const monthsTo=(cur,target,per)=>cur>=target?0:Math.ceil((target-cur)/per);
+function strategies(st){
+  const K=RULES.strat,notice=toDate(st.sc.noticeDate);
+  const ev=evalTypes(st),ac=applicantCompare(st),G=giftCalc(st),c=calc(st);
+  const row=k=>ev.rows.find(r=>r.key===k);
+  const nw=row('newlywed'),gn=row('general'),ft=row('firstTime');
+  const fT=num(st.f.total),mT=num(st.m.total),fC=num(st.f.count),mC=num(st.m.count);
+  const ap=ev.applicant==='m'?'본인':'여자친구';
+  const apT=ev.applicant==='m'?mT:fT;
+  const E=(lv,t,s)=>({lv,t,s:s||[]});
+  const lineMarks=r=>LINES.map(([L,lab])=>lab+' '+MARK[L==='post'?r.post.m:r.preLines[L].m]).join(' · ');
+  const out=[];
+  const ratio=(a,b)=>Math.round(a/b);
+
+  /* 전형별 경쟁 구조 */
+  const types=[
+    {label:'신혼부부 특별공급',pre:nw.pre.m,post:nw.post.m,lines:lineMarks(nw),
+     how:'배점제. 소득 100%(맞벌이 120%) 이하를 우선 공급하고, 점수 항목에 자녀 수·해당 시·도 연속 거주기간·통장 납입횟수가 들어갑니다.',
+     case:'남양주왕숙 A1 신혼 특공 14가구에 1,281명 접수(약 '+ratio(1281,14)+'대 1, 2025.8)',
+     note:nw.pre.m==='x'?'현재 미충족 항목이 있습니다. 사유는 전형별 자격 패널을 보세요.':'자격은 충족 방향입니다. 무자녀 예비신혼은 점수 항목 중 자녀 수가 0점에서 시작해 거주기간·통장 횟수로 경쟁하게 됩니다(추정).',
+     s:['bw22','law6','nw25']},
+    {label:'일반공급',pre:gn.pre.m,post:gn.post.m,lines:lineMarks(gn),
+     how:'순차제. 국민주택은 민영 가점제가 아니라 납입횟수·저축총액 중심입니다. 2022 개편안에 추첨제 20% 신설이 있었으나 이번 공고 적용은 미확인입니다.',
+     case:'공공분양 당첨선이 저축총액 1,200~1,500만 원대라는 보도(단지별 편차 큼)',
+     note:apT<K.refTotal[0]?ap+' 통장 '+comma(apT)+'만 원은 사례 당첨선보다 낮아 총액 경쟁에서는 불리합니다(추정). 지역우선 집단 안의 경쟁인지, 추첨 물량이 있는지는 공고에서 확인하세요.':ap+' 저축총액 '+comma(apT)+'만 원이 사례 당첨선 범위에 들어옵니다(단지별 편차가 큼).',
+     s:['daum1200','bw22']},
+    {label:'생애최초 특별공급',pre:ft.pre.m,post:ft.post.m,lines:lineMarks(ft),
+     how:'추첨제. 요건(소득세 5년, 저축액 600만 원, 무주택 이력)이 까다로운 대신 점수 경쟁은 없습니다.',
+     case:'남양주왕숙 A1 생애최초 21가구에 1,122명 접수(약 '+ratio(1122,21)+'대 1, 2025.8)',
+     note:ft.pre.m==='x'?'지금은 요건 미충족이라 이번 공고 후보에서 제외하는 것이 현실적입니다.':'요건 충족 방향이면 후보에 올리되, 신혼 특공과 함께 접수할 수 있는지는 공고에서 확인하세요.',
+     s:['first','nw25']}
+  ];
+
+  /* 1. 신청자 */
+  const best=ac.sf>ac.sm?'f':ac.sm>ac.sf?'m':null;
+  const t1=[];
+  if(best&&best!==ev.applicant)t1.push('12번 섹션의 신청자를 '+(best==='f'?'여자친구':'본인')+'로 바꿔 판정표를 다시 확인');
+  t1.push('공고일 전까지 주민등록 주소 이전·말소가 없게 유지(연속 거주기간이 끊기면 지역우선과 거주기간 점수에서 불리)');
+  if(ac.rows[0].m.m==='x')t1.push('본인은 '+(st.sc.city||'의정부시')+' 거주 이력이 끊겨 있어 지역우선 집단에서 불리합니다. 본인 명의 신청은 후순위로 두기');
+  out.push({id:'who',pri:'상',title:'신청자는 지역우선·통장 조건이 앞선 사람으로 정하기',
+    why:'경기도 주택은 해당 시·군 거주자에게 먼저 배정하는 비율이 있어, 의정부에 계속 거주한 사람이 가장 작은 경쟁 집단에서 시작합니다.',
+    now:[{m:ac.rows[0].f.m,t:'여자친구 – '+ac.rows[0].f.t},{m:ac.rows[0].m.m,t:'본인 – '+ac.rows[0].m.t},{m:'n',t:'비교 결과: '+ac.verdict+' (현재 판정표 신청자: '+ap+')'}],
+    todo:t1,
+    evid:[
+      E('law','주택건설지역이 경기도이면 해당 건설지역 거주자 30%, 경기도 거주자 20%를 우선 공급(주택공급에 관한 규칙, 택지 규모·지역에 따라 다름)',['lawloc']),
+      E('case','의정부우정 A-2 공고는 해당지역(의정부) 거주자 우선',['woo']),
+      E('case','남양주진접2는 남양주 1년 이상 30%·경기도 6개월 이상 20%·수도권 50%, 성남복정1은 성남 거주자 100% 우선(택지 규모에 따라 다른 사례)',['mtn21']),
+      E('law','신혼 특공 점수 항목에 해당 시·도 연속 거주기간이 포함(공공주택 특별법 시행규칙 별표 6·6의3)',['law6'])],
+    caveat:'법조타운 S1·S3의 지역우선 비율과 거주 기간은 공고 전이라 미확인입니다. 위 비율은 일반 규정과 다른 단지 사례입니다.'});
+
+  /* 2. 특공+일반 중복 접수 */
+  out.push({id:'dual',pri:'상',title:'신혼부부 특공과 일반공급을 모두 접수해 기회 늘리기',
+    why:'무주택 신혼부부는 소득·자산 요건을 충족하면 공공분양 특별공급과 일반공급을 중복 신청할 수 있어, 특공에서 떨어져도 일반공급 기회가 남습니다.',
+    now:[{m:nw.pre.m,t:'신혼부부 특공 자격(혼인 전) '+MARK[nw.pre.m]+' / (혼인 후) '+MARK[nw.post.m]},{m:gn.pre.m,t:'일반공급 자격(혼인 전) '+MARK[gn.pre.m]+' / (혼인 후) '+MARK[gn.post.m]}],
+    todo:['공고 접수 일정에서 특별공급일과 일반공급일이 나뉘어 있는지 확인','특공 접수 후 같은 명의로 일반공급 1순위도 접수','일반공급 순위 요건(통장 가입기간·횟수)은 아래 통장 항목에서 확인'],
+    evid:[E('case','무주택 신혼부부는 소득·자산 요건 충족 시 공공분양 특별공급과 일반공급 중복신청 가능(남양주왕숙 본청약 안내)',['nw0723']),E('law','단지별 접수 방식은 입주자모집공고문이 우선',['lh'])],
+    caveat:'법조타운 공고에서 중복신청 허용 여부와 일반공급 순위 요건을 확인해야 합니다.'});
+
+  /* 3. 한 세대 1건, 블록 선택 */
+  out.push({id:'one',pri:'상',title:'같은 세대 중복청약 방지, S1·S3 중 한 곳 정하기',
+    why:'공고에 따라 당첨자 발표일이 같은 단지에는 한 세대에서 1명이 1건만 접수할 수 있고, 어기면 모두 무효나 부적격이 됩니다. 두 분이 각자 다른 블록에 넣는 방식이 막혀 있을 수 있습니다.',
+    now:[{m:'t',t:'S1·S3 당첨자 발표일 미공개 → 동시 신청 가능 여부 미확인'},{m:'n',t:'의정부우정 A-2 공고의 재당첨 제한은 당첨 후 10년(법조타운은 미확인)'}],
+    todo:['공고문의 “중복청약” 문구와 두 블록의 당첨자 발표일을 확인','발표일이 같으면 한 곳만 접수. 다르면 먼저 발표되는 단지 당첨만 유효할 수 있음','선택 기준 정리: 신혼 특공 배정 세대수, 분양가 대비 예산, 위치·입주 시기, 당첨 시 계약할 의사(재당첨 제한 때문)'],
+    evid:[E('case','고양장항 S-1 공고(2025.7): 발표일이 같은 주택은 1세대 1명 1건만 접수, 2건 이상이면 모두 무효 또는 부적격',['gj']),E('case','파주운정3 A20 공고(2024.10): 부부(예비신혼 제외)는 각각 접수 가능하나 중복 당첨 시 먼저 접수한 건만 유효',['pj']),E('case','의정부우정 A-2 공고: 재당첨 제한 당첨 후 10년',['woo'])],
+    caveat:'공고마다 규칙이 달라 법조타운 공고문이 우선입니다.'});
+
+  /* 4. 통장 */
+  const per=K.monthlyCap,tg=K.refTotal;
+  const cc=cheongCheck(st.f,notice,false)[0];
+  const avgF=fC?Math.round(fT/fC*10)/10:null;
+  const now4=[{m:cc.m,t:'여자친구 – '+cc.t},
+    {m:'n',t:'여자친구 통장 '+fC+'회, 총액 '+comma(fT)+'만 원'+(avgF?'(총액÷횟수 월 평균 약 '+avgF+'만 원)':'')},
+    {m:'n',t:'월 '+per+'만 원씩 넣을 때 사례 당첨선까지: '+comma(tg[0])+'만 원 '+monthsTo(fT,tg[0],per)+'개월, '+comma(tg[1])+'만 원 '+monthsTo(fT,tg[1],per)+'개월'},
+    {m:'n',t:'본인 통장 '+mC+'회, 총액 '+comma(mT)+'만 원(같은 조건 '+comma(tg[0])+'만 원까지 '+monthsTo(mT,tg[0],per)+'개월)'}];
+  if(fT<tg[0])now4.push({m:'t',t:'청약 접수 전까지 남은 기간으로는 총액을 사례 당첨선까지 올릴 수 없어, 이번 일반공급은 총액 경쟁에서 불리합니다(추정)'});
+  out.push({id:'cheong',pri:'상',title:'통장은 전형별로 쓰임이 다름: 특공은 횟수, 일반공급은 총액',
+    why:'신혼 특공은 가입기간·납입횟수를 채우는 쪽이 중요하고, 일반공급은 월 인정액(최대 25만 원)을 채운 저축총액이 순위를 가릅니다. 어느 전형에 힘을 쓸지에 따라 통장 관리의 효과가 달라집니다.',
+    now:now4,
+    todo:['이번 공고는 통장 보충보다 접수 요건 충족 확인과 신혼 특공 접수에 집중','일반공급·다음 공고를 대비해 월 인정 한도 25만 원까지 자동이체 유지(생활비 여유 범위 안에서)','납입 회차가 비지 않게 유지(회차가 비면 횟수와 총액이 모두 줄어듦)'],
+    evid:[E('law','월 납입 인정 한도가 10만 원에서 25만 원으로 상향(2024.11.1 납입분부터)',['korea25','sbs25']),
+      E('case','신혼부부·다자녀 특공은 가입기간·납입횟수 중심, 일반공급·노부모는 월 납입 인정액(총액)이 중요하다는 보도',['daumTj']),
+      E('case','공공분양 당첨선은 보통 저축총액 1,200만~1,500만 원대라는 보도(단지·지역별 편차)',['daum1200'])],
+    caveat:'현재 월 납입액 입력란이 없어 총액÷횟수로 평균만 봤습니다. 월 25만 원은 연 300만 원 지출이므로 무리하지 마세요. 법조타운 당첨선은 공고·접수 후에만 알 수 있습니다.'});
+
+  /* 5. 신혼 배점·소득 구간 */
+  const earn=(c.mInc>0)&&(c.fInc[1]>0);
+  const base=RULES.monthly100.p3,capPct=earn?120:100;
+  const capYear=Math.round(base*capPct/100*12/10000);
+  const incLine=nw.pre.checks.find(x=>/총급여/.test(x.t));
+  const now5=[];
+  if(incLine)now5.push({m:incLine.m,t:incLine.t});
+  const room=capYear-c.incHigh;
+  now5.push({m:room>=0?'n':'x',t:'1순위 소득 상한('+(earn?'맞벌이 120%':'외벌이 100%')+')은 합산 총급여 약 '+comma(capYear)+'만 원, 현재 추정 최대 '+comma(c.incHigh)+'만 원이라 '+(room>=0?'여유 약 '+comma(room)+'만 원':'약 '+comma(-room)+'만 원 초과')});
+  now5.push({m:'n',t:'점수 항목: 자녀 수는 0, 거주기간은 의정부 연속 거주 기간, 납입횟수는 여자친구 '+fC+'회'});
+  out.push({id:'score',pri:'중',title:'신혼 특공 점수는 거주기간·납입횟수를 최대 구간으로, 소득은 1순위 안에 두기',
+    why:'신혼 특공은 소득 구간(1순위 100%·맞벌이 120%, 그다음 130%·140%)으로 순위를 나누고 점수로 가립니다. 자녀 수가 0인 경우 나머지 항목에서 점수를 잃지 않는 것이 핵심입니다.',
+    now:now5,
+    todo:['법조타운 공고문 붙임 배점기준표가 나오면 항목별 점수 구간을 확인해 현재 점수를 계산','의정부 연속 거주 유지, 통장 납입 중단 없이 유지','소득은 공고 기준 연도의 총급여로 산정되므로 1순위 상한에 가까워지면 성과급·연봉 변동을 확인'],
+    evid:[E('law','신혼 특공 점수 항목에 미성년 자녀 수, 해당 시·도 연속 거주기간, 통장 납입횟수가 포함(공공주택 특별법 시행규칙 별표 6·6의3). 구간별 점수는 공고문 확인',['law6']),
+      E('case','공공분양 일반형 개편안: 신혼부부는 소득 100%(맞벌이 120%) 이하에서 자녀 수·통장 납입횟수 등 배점제로 70% 우선 공급',['bw22']),
+      E('case','2021 사전청약 신혼 특공 우선공급은 최고 13점 중 12점 안팎에서 당첨선이 형성된 단지가 있었음(당시 점수표 기준이라 현행과 다를 수 있음)',['bw0902'])],
+    caveat:'세부 점수표는 공고 전이라 확인하지 못했습니다. 위 점수 항목은 규정의 항목 이름까지만 확인한 것입니다.'});
+
+  /* 6. 타입·세대수 */
+  const pr=num(st.sc.price),w=K.woo59;
+  out.push({id:'type',pri:'중',title:'공고가 나오면 타입별 신혼 특공 세대수와 분양가를 표로 놓고 고르기',
+    why:'같은 단지에서도 타입별 경쟁률 편차가 크고, 총 분양가가 낮은 쪽으로 신청이 몰리는 경향이 보도됐습니다. 배정 세대수가 적은 타입은 한두 세대 차이로도 경쟁률이 크게 변합니다.',
+    now:[{m:pr>=w[0]?'o':'t',t:'희망 주택가격 '+manN(pr)+' vs 의정부우정 A-2 59㎡ 분양가 '+comma(w[0])+'~'+comma(w[1])+'만 원(참고용, 법조타운 분양가는 미공개)'},
+      {m:'n',t:'의정부우정 A-2 신혼 특공 배정: 59A 13세대, 59B 4세대(합 17세대, 금회 공급 185세대 중)'}],
+    todo:['공고 후 타입별 신혼 특공 세대수·분양가·전용면적을 표로 정리','예산 범위(앱 12번 섹션 희망가) 안의 타입만 후보로 두기','세대수가 한 자릿수인 타입은 경쟁률이 크게 요동칠 수 있다는 점을 감안'],
+    evid:[E('case','인천계양 A2 84㎡ 특공 경쟁률 239.8대 1(전체 평균 25.7대 1)',['econ21']),E('case','총 분양가가 상대적으로 낮은 지구로 신청이 몰렸다는 분석',['bw0804']),E('case','의정부우정 A-2 특공 배정 세대수(신혼 17, 생애최초 26, 신생아 35 등)',['woo'])],
+    caveat:'타입별 경쟁률은 접수 결과로만 알 수 있어, 이 항목은 예측이 아니라 정리 방법입니다.'});
+
+  /* 7. 부적격 방지 */
+  const bad=nw.pre.checks.filter(x=>x.m==='t'||x.m==='x').slice(0,4).map(x=>({m:x.m,t:x.t}));
+  out.push({id:'doc',pri:'중',title:'부적격 방지: 자격 미확정 항목을 접수 전에 확정',
+    why:'당첨되어도 소득·자산·세대 서류에서 부적격이면 당첨이 인정되지 않을 수 있어, 확정되지 않은 입력값을 줄이는 것이 확률 관리의 일부입니다.',
+    now:bad.length?bad:[{m:'o',t:'현재 입력 기준으로 미확정 항목이 없습니다'}],
+    todo:['어머니 차량·토지 가액을 확인해 12번 섹션에 입력(같은 세대면 자산에 합산될 수 있음)','여자친구 연봉·총급여를 3번 섹션에 입력해 추정 범위를 확정값으로 교체','세대구성원 전원의 최근 10년 재산세(주택분) 과세증명서 등 서류를 미리 확인(서울시 안내문 기준)'],
+    evid:[E('case','서울시 안내문: 세대구성원 전원의 최근 10년 지방세 세목별 과세증명서(재산세 주택분) 구비',['seoulA2']),E('infer','자격 요건은 공고일 기준으로 심사되므로 접수 전 입력값 확정이 안전(일반 원칙)',[])],
+    caveat:'서류 목록은 단지별 공고문이 우선입니다(서류 체크리스트 패널 참고).'});
+
+  /* 8. 혼인 시점(조건부) */
+  const gdiff=G.reduce((a,x)=>a+(x.netB-x.netA),0);
+  if(nw.pre.m!==nw.post.m||gdiff>0){
+    const now8=[{m:nw.pre.m,t:'신혼 특공 혼인 전 '+MARK[nw.pre.m]+' / 혼인 후 '+MARK[nw.post.m]}];
+    if(G.length)now8.push({m:'n',t:'증여세: 혼인신고 함 '+manN(G.reduce((a,x)=>a+x.netA,0))+' / 없음·기간 밖 '+manN(G.reduce((a,x)=>a+x.netB,0))});
+    out.push({id:'marry',pri:'하',title:'혼인 전·후 판정 차이는 참고만, 시기는 두 분 계획이 우선',
+      why:'혼인 전과 후의 판정이 다르면 그 차이를 만드는 항목(세대 합산, 소득 범위 등)을 확인해 접수 전에 정리하는 용도입니다.',
+      now:now8,
+      todo:['전형별 자격 패널에서 혼인 전·후 칸의 사유를 비교','혼인신고일은 청약뿐 아니라 증여 혼인공제(전후 2년)와 대출 접수 시기에도 영향','청약만을 위해 혼인 시기를 앞당기는 것은 권하지 않음(공고 일정·입주 시기와 맞지 않을 수 있음)'],
+      evid:[E('law','예비신혼부부는 입주 전까지 혼인 사실을 증명, 세대는 혼인으로 구성될 세대 기준',['law6']),E('law','혼인공제 1억 원은 혼인신고일 전후 2년 증여분',['taxdel'])],
+      caveat:'혼인 시기 변경이 세대·자산·대출에 미치는 영향은 개별 확인이 필요합니다.'});
+  }
+
+  /* 9. 생애최초 */
+  const t9=taxYearCheck(st.f,notice);
+  const now9=ft.pre.checks.filter(x=>(x.m==='x'||x.m==='t')&&!/소득세|입사/.test(x.t)).slice(0,4).map(x=>({m:x.m,t:x.t}));
+  if(!now9.length)now9.push({m:'o',t:'현재 입력 기준으로 미충족 항목이 없습니다'});
+  now9.push({m:t9.m,t:'여자친구 소득세 5년 – '+t9.t});
+  now9.push({m:'n',t:'본인 통장 저축액 600만 원까지 월 '+per+'만 원 납입 시 '+monthsTo(mT,600,per)+'개월'});
+  out.push({id:'first',pri:'하',title:ft.pre.m==='x'?'생애최초 특공은 이번에는 후보에서 제외하고 다음 공고 준비':'생애최초 특공(추첨제)도 후보로 검토',
+    why:'생애최초는 점수가 아니라 추첨이라 요건만 채우면 운이 작동합니다. 다만 소득세 납부 5년과 저축액 600만 원 요건을 먼저 채워야 합니다.',
+    now:now9,
+    todo:['입사 전 소득세 납부 이력이 있으면 3번 섹션에 통산 연수를 입력해 판정 재확인','통장 저축액 600만 원 이상 유지','이번 공고에서 낙첨하면 요건 충족 시점 이후 공고에서 여자친구 명의로 재도전 검토'],
+    evid:[E('law','생애최초 특공: 세대원 전원 주택 소유 이력 없음, 통장 저축액 600만 원 이상, 소득세 5년 이상 납부, 추첨',['law6','first']),E('case','남양주왕숙 A1 생애최초 21가구에 1,122명 접수',['nw25'])],
+    caveat:'소득세 5년은 입사 이후 기간만으로 계산했습니다. 입사 전 납부 이력은 확인되지 않았습니다.'});
+
+  const order={'상':0,'중':1,'하':2};
+  out.sort((a,b)=>order[a.pri]-order[b.pri]);
+  const unknown=['법조타운 S1·S3의 전형별 공급 세대수','해당지역 우선 비율과 거주 기간','신혼 특공 배점표와 점수 기준','일반공급 저축총액 당첨선','두 블록의 당첨자 발표일(중복청약 규칙)','재당첨 제한 기간'];
+  return {types,items:out,unknown};
+}
+
+/* ============================================================
+   쉬운 설명 사전: check.k(종류)와 check.d(판정에 쓴 값)로 풀어 씁니다.
+   판정 로직은 건드리지 않고, 숫자는 check에 담긴 값만 그대로 끼워 넣습니다.
+   kind가 없거나 사전에 없으면 null을 돌려주고 화면은 기존 문구를 그대로 보여줍니다.
+   ============================================================ */
+const EXSEC={f:{addr:'2',tax:'3',cheong:'6'},m:{addr:'10',tax:'10',cheong:'11'}};
+const NM=w=>w==='m'?'본인':w==='f'?'여자친구':'두 분';
+function explain(c){
+  const K=c.k;if(!K)return null;
+  const d=c.d||{},tk=[],T=v=>{tk.push(String(v));return String(v)};
+  const w=d.who==='m'?'m':'f',sec=key=>EXSEC[w][key];
+  const o={h:'',e:'',c:'',s:[],u:false,uNote:''};
+  const okm=c.m==='o';
+  switch(K){
+    case 'house':{
+      const nm=d.who==='both'?'두 분':NM(d.who),sc=d.who==='m'?'10번':d.who==='f'?'2번':'2번(여자친구)과 10번(본인)';
+      o.h=c.m==='o'?nm+' 명의 주택이 없어 문제없습니다.':c.m==='x'?(d.who==='both'?'두 분 중 한 분':nm)+' 명의 주택이 있어 신청이 어렵습니다.':'주택 보유 여부를 아직 입력하지 않았습니다.';
+      o.e='청약은 무주택세대구성원(같은 주민등록 세대에 집을 가진 사람이 없는 상태)만 신청할 수 있습니다. 이 항목은 청약자 명의 주택이 있는지 봅니다.';
+      o.c=c.m==='t'?sc+' 섹션의 "본인 명의 주택 보유 여부"를 입력하세요.':c.m==='x'?'사실과 다르면 '+sc+' 섹션 값을 고치세요.':'';
+      o.s=['law6'];break}
+    case 'fatherHouse':
+      o.h=c.m==='o'?'아버지 명의 주택은 판정에서 제외했습니다.':'같은 세대 아버지 명의 주택이 있어 신청이 어렵습니다.';
+      o.e='청약 자격은 같은 주민등록 세대에 속한 사람의 주택만 봅니다. '+(c.m==='o'?'아버지는 세대가 달라 제외했습니다.':'아버지가 같은 세대라 주택이 세대 기준에 들어갑니다.');
+      o.c='주민등록 등본에서 아버지와 세대가 실제로 분리되어 있는지 확인하고, 다르면 2번 섹션의 "같은 세대 구성원"을 고치세요.';
+      o.s=['law6'];break;
+    case 'income':{
+      const g=d.type==='general';
+      o.h=c.split?'여자친구 소득 추정 범위에 따라 결과가 갈립니다.':d.tier==='first'?(g?'소득이 기준 안이라 문제없습니다.':'소득이 1순위 기준 안이라 문제없습니다.'):d.tier==='second'?'소득이 1순위 기준을 넘어 순위가 밀립니다.':d.tier==='entry'?'소득이 순위 밖이지만 입주 요건 안입니다.':'소득이 기준을 넘어 신청이 어렵습니다.';
+      let e=d.who+'의 총급여는 '+T(d.sum)+'만 원이고, 한 달로 나누면 '+T(d.monthly)+'만 원입니다. 도시근로자 월평균소득(국가 통계의 근로자 가구 월 평균 소득)의 '+T(d.pct)+'%입니다.';
+      if(g)e+=d.tier==='first'?' 일반공급 기준 '+T(d.lim)+'% 이내입니다.':' 일반공급 기준 '+T(d.lim)+'%('+T(d.cap)+'만 원/월)를 넘습니다.';
+      else if(d.tier==='first')e+=' 1순위 기준 '+T(d.f1)+'%('+T(d.cap1)+') 이내입니다.';
+      else if(d.tier==='second')e+=' 1순위 기준('+T(d.f1)+'%)을 넘고 2순위 기준('+T(d.s2)+'%) 이내입니다. 순위가 밀리면 같은 전형 안에서 후순위로 경쟁합니다.';
+      else if(d.tier==='entry')e+=' 순위 기준은 넘지만 입주 요건('+T(d.en)+'%) 이내입니다.';
+      else e+=' 입주 요건('+T(d.en)+'%, '+T(d.capEn)+')을 넘습니다.';
+      if(d.earn)e+=' 부부 모두 소득이 있어 맞벌이 기준을 적용했습니다.';
+      if(c.d2)e+=' 여자친구 소득이 미입력이라 낮은 가정은 '+T(d.pct)+'%, 높은 가정은 '+T(c.d2.pct)+'%로 계산했습니다.';
+      o.e=e;
+      o.c=c.d2?'3번 섹션에 여자친구의 연봉이나 총급여를 입력하면 추정 범위 대신 확정값으로 계산합니다.':'소득이 바뀌면(연봉 인상, 성과급 등) 3번(여자친구)·10번(본인) 섹션 값을 고치세요.';
+      o.s=['lh','law6'];break}
+    case 'incomeMissing':
+      o.h='소득을 아직 입력하지 않았습니다.';o.e='소득 기준을 판단하려면 총급여가 필요합니다.';
+      o.c=d.who==='m'?'10번 섹션에 연봉과 비과세 월액을 입력하세요.':'3번 섹션에 연봉이나 총급여를 입력하세요. 비워 두면 12번 섹션의 추정 범위로 계산합니다.';
+      o.s=['lh'];break;
+    case 'singleIncUnknown':
+      o.h='1인 가구 소득 기준은 아직 확인하지 못했습니다.';
+      o.e='혼자 신청하는 줄은 1인 가구 기준이 따로 있을 수 있습니다. 확인하지 못해 이 앱은 3인 이하 기준으로 계산했고, 이 줄의 소득 결과는 참고용입니다.';
+      o.u=true;o.uNote='아직 확인하지 못한 규정입니다.';o.s=['lh'];break;
+    case 'land':
+      o.h=c.m==='o'?'부동산이 한도 안입니다.':c.m==='t'?'부동산이 한도에 가깝습니다.':'부동산이 한도를 넘어 신청이 어렵습니다.';
+      o.e='청약에는 세대 부동산 가액 한도('+T(d.limit)+'만 원)가 있습니다. 이 줄에서 계산한 부동산은 '+T(d.land)+'만 원'+(d.mom?'이고, 같은 세대인 어머니의 토지를 세대 자산에 넣었습니다.':'입니다(어머니 자산은 넣지 않았습니다).');
+      o.c=d.mom?'이 앱은 혼인 후 어머니와 세대를 분리하면 어머니 자산을 빼고 계산합니다(12번 섹션 "혼인 후 세대"). 토지 가액이 다르면 12번 섹션에서 고치세요.':'부모와 같은 세대라면 부모 자산이 합산될 수 있으니 2번·10번 섹션의 세대 정보를 확인하세요.';
+      o.s=['lh'];break;
+    case 'car':
+      o.h=c.m==='o'?'자동차 가액이 한도 안입니다.':'자동차 가액이 한도를 넘어 신청이 어렵습니다.';
+      o.e='청약에는 자동차 가액 한도('+T(d.limit)+'만 원)가 있습니다. 세대에서 가장 비싼 한 대를 '+T(d.mx)+'만 원으로 계산했습니다'+(d.mom?'(어머니 차량 포함)':'')+'. 세대 합산인지 최고가인지는 아직 확인하지 못한 규정입니다.';
+      o.c='차량 가액이 다르면 4번(여자친구)·11번(본인) 자산 섹션이나 12번 섹션(어머니 차량)에서 고치세요.';
+      o.u=true;o.uNote='자동차 가액 산정 방식은 아직 확인하지 못했습니다.';o.s=['lh'];break;
+    case 'momCar':
+      o.h='어머니 차량 가액을 입력하지 않아 판정을 확정하지 못했습니다.';
+      o.e='같은 세대인 어머니의 차량도 세대 자산에 들어갈 수 있어, 가액이 한도('+T(d.limit)+'만 원)를 넘는지 알아야 합니다.';
+      o.c='12번 섹션 "어머니 차량 가액"을 입력하세요. 차량이 없으면 0을 넣으세요.';o.s=['lh'];break;
+    case 'marriedOk':
+      o.h='혼인 요건을 충족합니다.';o.e='신혼부부 특공은 혼인한 지 7년 이내인 부부가 대상입니다. 혼인신고 후 줄은 이 요건을 충족한다고 보았습니다.';o.s=['law6'];break;
+    case 'marryMissing':
+      o.h='혼인 예정월을 입력하지 않았습니다.';o.e='예비신혼부부는 혼인 예정 시기와 입주 시기를 비교해 판단합니다.';o.c='12번 섹션 "혼인신고 예정월"을 입력하세요.';o.s=['law6'];break;
+    case 'moveInUnknown':
+      o.h='입주 시기를 아직 알 수 없어 확정하지 못했습니다.';
+      o.e='혼인 전에 신혼부부 특공에 신청하는 예비신혼부부는 입주 전까지 혼인신고를 하고 혼인관계증명서를 낼 수 있어야 합니다. 혼인 예정월은 '+d.marry+'인데, 법조타운 입주 예정월은 공고 전이라 아직 알 수 없습니다.';
+      o.c='공고에 입주 예정월이 나오면 12번 섹션 "입주 예정월"에 입력하세요. 혼인 예정월이 입주보다 늦으면 ✕로 바뀝니다.';o.s=['law6'];break;
+    case 'marryVsMoveIn':
+      o.h=c.m==='o'?'혼인신고가 입주보다 앞서 문제없습니다.':'혼인신고 예정이 입주보다 늦어 신청이 어렵습니다.';
+      o.e='예비신혼부부는 입주 전까지 혼인신고가 필요합니다. 혼인 예정월은 '+d.marry+', 입주 예정월은 '+d.moveIn+'입니다.';
+      o.c=c.m==='x'?'12번 섹션의 혼인 예정월과 입주 예정월을 확인하세요.':'';o.s=['law6'];break;
+    case 'naSingleNewlywed':
+      o.h='이 줄은 해당 없음입니다.';o.e='신혼부부 특공은 혼인했거나 곧 혼인할 부부(예비신혼부부)가 한 세대로 신청하는 전형입니다. 혼자 신청하는 줄에서는 판정하지 않습니다.';o.c='"예비신혼 합산" 줄을 보세요.';o.s=['law6'];break;
+    case 'naCoupleGeneral':
+      o.h='이 줄은 해당 없음입니다.';o.e='혼인 전 일반공급은 지금의 주민등록 세대 기준으로 신청합니다. 아직 부부가 아니라 소득과 자산을 합산하지 않습니다.';o.c='"본인 단독"·"여자친구 단독" 줄을 보세요.';o.s=['law6'];break;
+    case 'naCoupleFirst':
+      o.h='이 줄은 해당 없음입니다.';o.e='혼인 전 생애최초는 혼자 사는 1인 가구로 신청하는 방식이라 두 사람을 합산하지 않습니다.';o.c='"본인 단독"·"여자친구 단독" 줄을 보세요.';o.s=['first'];break;
+    case 'firstMarried':
+      o.h='혼인 요건을 충족합니다.';o.e='생애최초 특공은 혼인 중이거나 미혼 자녀가 있어야 합니다. 혼인신고 후 줄은 혼인 중으로 보았습니다.';o.s=['law6','first'];break;
+    case 'firstSingle':
+      o.h='혼인 전 생애최초는 조건이 더 까다롭습니다.';
+      o.e='혼인 전에는 혼인·자녀 요건 대신 1인 가구로 단독 신청합니다. 이때 혼자 세대주이면 전용 60㎡ 이하 주택만 신청할 수 있습니다.';
+      o.c='혼인신고 후 줄에서는 혼인 중 요건으로 판단하므로 이 제한이 없습니다. 다만 소득세 5년 등 다른 요건은 남아 있습니다.';o.s=['law6','first'];break;
+    case 'ownHist':
+      o.h='과거 주택 소유 이력을 확인해야 합니다.';o.e='생애최초는 세대원 전원이 과거에도 집을 가진 적이 없어야 합니다.';
+      o.c='사실이라면 2번(여자친구)·10번(본인) 섹션의 "주택 보유·처분 이력"에 "없음"을 입력하세요.';o.s=['first'];break;
+    case 'cheong':
+      o.h=d.ok?'통장 요건을 충족합니다.':'통장 요건에 못 미쳐 신청이 어렵습니다.';
+      o.e='국민주택 청약은 통장 가입 기간과 납입 횟수 요건이 있습니다. 의정부우정 A-2 공고는 '+T(d.months)+'개월·'+T(d.count)+'회를 요구했습니다. '+NM(w)+' 통장은 '+T(d.mo)+'개월, '+T(d.cnt)+'회 납입(총액 '+T(d.tot)+'만 원)입니다. 법조타운 공고의 요건 수치는 아직 확인하지 못했습니다.';
+      o.c=d.ok?'법조타운 공고가 나오면 요건 수치를 다시 확인하세요.':'납입을 이어가세요. 입력이 틀렸다면 '+sec('cheong')+'번 섹션의 통장 항목을 고치세요.';
+      o.u=true;o.uNote='법조타운 공고의 통장 요건은 아직 확인하지 못했습니다.';o.s=['woo','woo2'];break;
+    case 'cheongMissing':
+      o.h='통장 가입월·납입 횟수를 입력하지 않았습니다.';o.e='통장 요건은 가입 기간과 납입 횟수로 판단합니다.';o.c='6번(여자친구)·11번(본인) 섹션의 통장 항목을 입력하세요.';o.s=['woo'];break;
+    case 'resMissing':
+      o.h='주민등록 주소지를 입력하지 않았습니다.';o.e='지역우선은 주민등록상 거주 지역과 기간으로 판단합니다.';o.c='1번(여자친구)·10번(본인) 섹션의 "주민등록상 주소지"를 입력하세요.';o.s=['lawloc'];break;
+    case 'resStartMissing':
+      o.h='거주 시작월을 입력하지 않았습니다.';o.e='거주 기간을 계산하려면 해당 지역에 언제부터 살았는지 필요합니다.';o.c='2번·10번 섹션의 주소 이력이나 "현 주소지 전입 연월"을 입력하세요.';o.s=['lawloc'];break;
+    case 'resBroken':
+      o.h=T(d.city)+' 거주 이력이 끊겨 지역우선에서 불리합니다. 자격이 없어지는 것은 아닙니다.';
+      o.e='경기도 주택은 해당 시·군에 계속 거주한 사람에게 먼저 배정하는 비율이 있습니다. '+NM(w)+'의 현재 주민등록은 '+T(d.cur)+(d.mo?'이고 전입한 지 '+T(d.mo)+'개월입니다.':'입니다.')+' 그래서 거주 기간이 이어지지 않아 더 넓은 지역(경기도·수도권) 순위에서 경쟁하게 됩니다. 법조타운의 배정 비율은 아직 확인하지 못했습니다.';
+      o.c='주소 이력이 사실과 다르면 '+sec('addr')+'번 섹션의 주소 정보를 고치세요.';
+      o.u=true;o.uNote='법조타운의 지역우선 비율은 아직 확인하지 못했습니다.';o.s=['lawloc','woo'];break;
+    case 'resOk':{
+      const out=+d.outside>0;
+      o.h=c.m==='o'?T(d.city)+' 거주 기간이 길어 지역우선에 유리합니다.':T(d.city)+' 거주 기간이 1년 미만입니다.';
+      o.e=NM(w)+'은 '+T(d.city)+'에 약 '+T(d.years)+'년 거주했습니다. 해당 시·군 거주자에게 먼저 배정하는 비율이 있고, 신혼 특공 점수에도 해당 시·도 연속 거주기간이 들어갑니다(구간별 점수는 공고문 확인).'+(out?' 주소 이력에 타 지역 '+T(d.outside)+'건이 있어 중간에 끊기지 않았는지 확인이 필요합니다.':'');
+      o.c='공고일 전까지 주소 이전·말소가 없게 유지하세요.';
+      o.u=true;o.uNote='법조타운의 지역우선 비율은 아직 확인하지 못했습니다.';o.s=['lawloc','law6'];break}
+    case 'savings':
+      o.h=c.m==='o'?'저축액 요건을 충족합니다.':'생애최초는 저축액이 부족합니다.';
+      o.e='생애최초 특공은 청약통장 저축액이 '+T(d.need)+'만 원 이상이어야 합니다. '+NM(w)+'의 저축액은 '+T(d.tot)+'만 원입니다.';
+      o.c=c.m==='x'?'통장 납입을 이어 총액을 채워야 합니다. 입력이 다르면 '+sec('cheong')+'번 섹션의 "납입 총액"을 고치세요.':'';
+      o.s=['law6','first'];break;
+    case 'taxYears':
+      o.h=d.ok?'소득세 5년 요건을 채웠습니다.':'생애최초는 이번 공고에 신청이 어렵습니다.';
+      o.e='생애최초 특공은 소득세를 5년 이상 낸 사람만 신청할 수 있습니다(납부할 세액이 0원이어도 신고했다면 포함). '+NM(w)+'은 '+(d.manual?'통산 ':'입사 후 ')+T(d.years)+'년입니다.'+(d.ok?' 5년을 넘었습니다.':(d.reach?' 5년이 되는 날은 '+T(d.reach)+'입니다.':' 5년에 못 미칩니다.'));
+      o.c=d.ok?'':d.manual?'통산 연수를 다시 확인해 '+sec('tax')+'번 섹션의 "소득세 납부 통산 연수"를 고치세요.':'입사 전에 알바나 다른 직장에서 소득세를 낸 적이 있으면 '+sec('tax')+'번 섹션의 "소득세 납부 통산 연수"에 입력하세요. 그 기간도 합산되어 판정이 다시 계산됩니다.';
+      o.s=['first','law6'];break;
+    case 'taxStartMissing':
+      o.h='입사일을 입력하지 않아 소득세 5년을 확인할 수 없습니다.';o.e='소득세 납부 기간은 입사일이나 통산 연수로 계산합니다.';
+      o.c='3번(여자친구)·10번(본인) 섹션에 입사일이나 통산 연수를 입력하세요.';o.s=['first'];break;
+    default:return null;
+  }
+  o.tokens=tk;o.k=K;
+  return o;
+}
+
+/* ============================================================
+   정리본 (마크다운)
+   ============================================================ */
+const MARK={o:'○',t:'△',x:'✕',n:'–'};
+function buildMd(st){
+  const p=progress(st),c=calc(st);
+  const L=[];
+  const nameF=cell(st.f.nick||''),nameM=cell(st.m.nick||'');
+  L.push('# 내집마련 정보 정리'+(nameF||nameM?' - '+[nameM,nameF].filter(Boolean).join(' / '):''));
+  L.push('');
+  L.push('- 작성일시: '+nowStr());
+  L.push('- 입력 기준일: '+(fmtDate(st.asOf)||'미입력'));
+  L.push('- 규정 기준일: '+RULES.asOf+' (참고용, 모든 판정은 추정. 실제 자격은 입주자 모집공고문과 기관 심사가 우선)');
+  L.push('- 입력 진행률: '+p.pct+'% ('+p.done+'/'+p.total+'개 항목)');
+  L.push('');
+  const missing=[];
+  const fieldRows=(s)=>{
+    const pf=store(st,s.w);
+    s.fields.forEach(f=>{
+      const v=has(pf[f.k])?(f.t==='num'?man(pf[f.k]):f.t==='int'?pf[f.k]+(f.u||''):f.t==='dec'?pf[f.k]+(f.u||''):f.t==='range'?man(pf[f.k]):f.t==='date'?fmtDate(pf[f.k]):f.t==='month'?fmtMonth(pf[f.k]):cell(pf[f.k])):null;
+      L.push('| '+f.l+' | '+(v===null?'미입력':v)+' |');
+      if(v===null&&s.req.includes(f.k))missing.push(s.title.replace(/^\d+\.\s*/,'')+' > '+f.l);
+    });
+  };
+  SECTIONS.forEach(s=>{
+    L.push('## '+s.title);L.push('');
+    if(s.id==='todo'){
+      if(!st.todo.length)L.push('미입력');
+      st.todo.forEach(t=>L.push('- ['+(t.done?'x':' ')+'] '+(cell(t.t)||'(내용 없음)')+(t.due?' (기한 '+fmtDate(t.due)+')':'')));
+      L.push('');return;
+    }
+    if(s.fields.length){L.push('| 항목 | 내용 |');L.push('|---|---|');fieldRows(s);L.push('')}
+    if(s.check){L.push('- '+s.check.l+': '+(st[s.check.k]?'예':'아니오'));L.push('')}
+    if(s.list){
+      const lst=LISTS[s.list],rows=st[s.list].filter(r=>Object.keys(r).some(k=>String(r[k]).trim()!==''));
+      L.push('**'+lst.label+'**');L.push('');
+      if(!rows.length){
+        L.push('미입력');
+        if(!(s.check&&st[s.check.k]))missing.push(s.title.replace(/^\d+\.\s*/,'')+' > '+lst.label);
+      }else{
+        L.push('| '+lst.cols.map(x=>x.l.replace(/\(.*\)/,'')).join(' | ')+' |');
+        L.push('|'+lst.cols.map(()=>'---').join('|')+'|');
+        rows.forEach(r=>L.push('| '+lst.cols.map(x=>{
+          const v=r[x.k];if(String(v).trim()==='')return '미입력';
+          return x.t==='num'?man(v):x.t==='month'?fmtMonth(v):cell(v);
+        }).join(' | ')+' |'));
+      }
+      L.push('');
+    }
+  });
+  L.push('## 자동 계산 (두 분 합산)');L.push('');
+  L.push('| 항목 | 금액 |');L.push('|---|---|');
+  L.push('| 총자산 | '+manBig(c.assets)+' |');
+  L.push('| 총부채 | '+manBig(c.debts)+' |');
+  L.push('| 순자산 | '+(c.net<0?'-':'')+manBig(Math.abs(c.net))+' |');
+  L.push('| 월 대출 상환액 합계 | '+comma(c.monthly)+'만 원 |');
+  L.push('| 예상 합산 연소득(총급여) | '+(c.incLow===c.incHigh?manBig(c.incLow):comma(c.incLow)+'~'+comma(c.incHigh)+'만 원')+(c.fRange?' (여자친구 소득은 추정 범위)':'')+' |');
+  L.push('');
+  /* 판정 */
+  const ev=evalTypes(st);
+  L.push('## 전형 판정 요약 (추정, 신청자: '+(ev.applicant==='m'?'본인':'여자친구')+')');L.push('');
+  if(ev.rangeUsed)L.push('여자친구 소득은 미입력이라 '+comma(ev.lo)+'~'+comma(ev.hi)+'만 원 추정 범위로 계산했습니다.');
+  L.push('');
+  L.push('| 구분 | '+ev.rows.map(r=>r.short).join(' | ')+' |');L.push('|---|'+ev.rows.map(()=>'---').join('|')+'|');
+  ev.summary.table.forEach(t=>L.push('| '+t.label+' | '+t.marks.map(x=>MARK[x]).join(' | ')+' |'));
+  L.push('');
+  L.push('- 가장 유리한 조합(혼인 전): '+ev.summary.textPre);
+  L.push('- 혼인 후: '+ev.summary.textPost);
+  L.push('');
+  ev.rows.forEach(r=>{
+    L.push('### '+r.label);L.push('');
+    LINES.forEach(([ln,lab])=>{
+      const c=ln==='post'?r.post:r.preLines[ln];
+      const bad=c.checks.filter(x=>x.m==='x'||x.m==='t').map(x=>cell(x.t));
+      L.push('- '+lab+' '+MARK[c.m]+(c.na?' (해당 없음)':bad.length?': '+bad.join('; '):''));
+    });
+    L.push('');
+  });
+  L.push('청약 정보(두 사람 각각): 신혼·일반·생애최초 모든 줄에 통장 가입월·횟수·총액, 의정부 거주 기간, 주소 이력 단절 여부를 표시했습니다. 생애최초 줄에는 저축액 600만 원과 소득세 5년 도달일이 추가됩니다.');
+  L.push('');
+  L.push('신생아·다자녀·노부모·기관추천 전형은 자녀·부양 대상이 없어 해당 없음으로 봅니다.');
+  L.push('');
+  const ac=applicantCompare(st);
+  L.push('## 신청자 비교 (본인 vs 여자친구)');L.push('');
+  L.push('| 항목 | 본인 | 여자친구 |');L.push('|---|---|---|');
+  ac.rows.forEach(r=>L.push('| '+r.label+' | '+MARK[r.m.m]+' '+cell(r.m.t)+' | '+MARK[r.f.m]+' '+cell(r.f.t)+' |'));
+  L.push('');L.push('- 종합: '+ac.verdict);L.push('');
+  const sg=strategies(st);
+  L.push('## 당첨 전략 (근거 포함, 추정)');L.push('');
+  L.push('당첨 확률 수치는 계산하지 않았습니다. 공급 세대수, 배점표, 당첨선이 공고 전이라 알 수 없는 항목: '+sg.unknown.join(', ')+'.');L.push('');
+  L.push('| 전형 | 자격(줄별) | 경쟁 방식 | 참고 경쟁 사례 | 판단 |');L.push('|---|---|---|---|---|');
+  sg.types.forEach(t=>L.push('| '+t.label+' | '+t.lines+' | '+cell(t.how)+' | '+cell(t.case)+' | '+cell(t.note)+' |'));
+  L.push('');
+  sg.items.forEach(it=>{
+    L.push('### ['+it.pri+'] '+it.title);L.push('');
+    L.push('- 이유: '+it.why);
+    L.push('- 현재 상태: '+it.now.map(n=>MARK[n.m]+' '+n.t).join(' / '));
+    L.push('- 할 일: '+it.todo.join(' / '));
+    it.evid.forEach(e=>L.push('- 근거 ['+LV[e.lv]+']: '+e.t+(e.s.length?' ('+e.s.map(k=>U[k].u).join(' , ')+')':'')));
+    L.push('- 한계: '+it.caveat);L.push('');
+  });
+  const ls=loanSim(st);
+  L.push('## 대출 시뮬레이션 (추정)');L.push('');
+  L.push('| 항목 | 값 |');L.push('|---|---|');
+  L.push('| 희망 주택가격 | '+manBig(ls.price)+' |');
+  L.push('| 부대비용('+st.sc.costPct+'%) | '+manN(ls.cost)+' |');
+  L.push('| 자기자금(예금·투자·기타 + 가족 지원) | '+manN(ls.fund)+' (지원금 '+manN(ls.gifts)+') |');
+  L.push('| 필요 대출액 | '+manN(ls.need)+' |');
+  L.push('| 신혼 디딤돌 한도 추정(LTV 70%, 4억 상한) | '+manN(ls.limit)+(ls.short>0?' → 부족 '+manN(ls.short):'')+' |');
+  L.push('| 월 상환액(금리 '+ls.rate+'%, '+ls.yrs+'년 원리금균등) | '+manN(ls.pay)+' |');
+  L.push('| 합산소득 vs 신혼 디딤돌 8,500만 원 | '+MARK[ls.mNewly]+' '+ls.incRange+' |');
+  L.push('| 순자산 vs 5.11억 | '+MARK[ls.netOk?'o':'x']+' '+manBig(ls.netAsset)+' |');
+  L.push('| 주택가격 vs 5억 상한 | '+MARK[ls.priceOk?'o':'x']+' |');
+  L.push('');
+  const gt=giftCalc(st);
+  L.push('## 증여세 시뮬레이션 (추정)');L.push('');
+  if(!gt.length)L.push('입력된 가족 지원 없음');
+  gt.forEach(g=>{
+    L.push('**받는 사람: '+g.to+'** (지원 합계 '+manN(g.total)+')');L.push('');
+    L.push('| 시나리오 | 공제 | 과세표준 | 예상 증여세(신고세액공제 3% 반영) |');L.push('|---|---|---|---|');
+    L.push('| 혼인신고 함(기간 안) | 기본 '+manN(g.basic)+' + 혼인 '+manN(g.mDed)+' | '+manN(g.baseA)+' | '+manN(g.netA)+' |');
+    L.push('| 혼인신고 없음·기간 밖 | 기본 '+manN(g.basic)+' | '+manN(g.baseB)+' | '+manN(g.netB)+' |');
+    L.push('');
+    g.rows.forEach(r=>L.push('- '+cell(r.who)+' '+manN(r.amt)+(r.date?' / 수령 '+fmtMonth(r.date)+' / 신고기한 '+(r.deadline?fmtD(r.deadline):''):' / 수령월 미입력(혼인공제 기간 안으로 가정)')));
+    if(g.win)L.push('- 혼인공제 인정 기간(혼인신고 전후 2년): '+fmtMonth(g.win.from)+' ~ '+fmtMonth(g.win.to));
+    L.push('');
+  });
+  L.push('## 공고 목록 (확인일 '+RULES.asOf+')');L.push('');
+  NOTICES.forEach(n=>{
+    L.push('- **'+n.name+'** ['+n.status+'] '+n.kind+', '+n.units+'. 일정: '+n.plan+'. 분양가: '+n.price+'.'+(n.cands.length?' 전형 후보: '+n.cands.join(', ')+'.':'')+' ('+n.s.map(k=>U[k].u).join(' , ')+')');
+  });
+  L.push('');
+  L.push('## 미확인 규정');L.push('');
+  RULE_ITEMS.filter(r=>r.st==='미확인'||r.st==='일부').forEach(r=>L.push('- ['+r.st+'] '+r.l));
+  L.push('');
+  L.push('## 미입력 항목');L.push('');
+  if(!missing.length)L.push('없음');
+  missing.forEach(m=>L.push('- '+m));
+  L.push('');
+  return L.join('\n');
+}
+
+/* ============================================================
+   화면
+   ============================================================ */
+if(typeof document!=='undefined'){
+(function(){
+  let st=blankState();
+  let loaded=false;
+  try{const raw=localStorage.getItem(STORE_KEY);if(raw){st=sanitize(JSON.parse(raw));loaded=true}}catch(e){}
+  if(!loaded)st=sanitize(SEED());
+
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const KLASS={num:'num',int:'int',dec:'dec'};
+
+  function inputHtml(c,id,val,attrs){
+    if(c.t==='sel')return '<select id="'+id+'" '+attrs+'><option value="">선택</option>'+c.o.map(o=>'<option'+(o===val?' selected':'')+'>'+esc(o)+'</option>').join('')+'</select>';
+    if(c.t==='area')return '<textarea id="'+id+'" '+attrs+'>'+esc(val)+'</textarea>';
+    if(c.t==='range'){
+      const v=val===''?'40000':val;
+      return '<div class="in"><input type="range" id="'+id+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+esc(v)+'" '+attrs+'><em id="'+id+'-out" style="min-width:110px;text-align:right">'+comma(num(v))+'만 원</em></div>';
+    }
+    if(KLASS[c.t]){
+      const shown=val===''?'':(c.t==='num'?comma(num(val)):String(val));
+      return '<div class="in"><input type="text" inputmode="'+(c.t==='dec'?'decimal':'numeric')+'" autocomplete="off" class="'+KLASS[c.t]+'" id="'+id+'" value="'+esc(shown)+'" '+attrs+'>'+(c.u?'<em>'+esc(c.u)+'</em>':'')+'</div>';
+    }
+    const type=c.t==='date'?'date':c.t==='month'?'month':'text';
+    return '<input type="'+type+'" id="'+id+'" value="'+esc(val)+'" autocomplete="off" '+attrs+'>';
+  }
+  function fieldHtml(f,w){
+    const v=store(st,w)[f.k]||'';
+    return '<label class="fld" for="f-'+w+'-'+f.k+'"><span>'+esc(f.l)+(f.h?' <small style="font-weight:400">· '+esc(f.h)+'</small>':'')+'</span>'+
+      inputHtml(f,'f-'+w+'-'+f.k,v,'data-w="'+w+'" data-k="'+f.k+'"')+'</label>';
+  }
+  function listHtml(name){
+    if(name==='todo'){
+      return st.todo.map((t,i)=>
+        '<div class="todo'+(t.done?' done':'')+'">'+
+        '<input type="checkbox" id="todo-'+i+'-done" data-l="todo" data-i="'+i+'" data-f="done"'+(t.done?' checked':'')+' aria-label="완료">'+
+        '<input type="text" id="todo-'+i+'-t" value="'+esc(t.t)+'" data-l="todo" data-i="'+i+'" data-f="t" placeholder="할 일" aria-label="할 일">'+
+        '<div class="sub"><input type="date" id="todo-'+i+'-due" value="'+esc(t.due)+'" data-l="todo" data-i="'+i+'" data-f="due" aria-label="기한">'+
+        '<button type="button" class="small del" data-del="todo" data-i="'+i+'">삭제</button></div></div>'
+      ).join('')+'<button type="button" class="small" data-add="todo">할 일 추가</button>';
+    }
+    const lst=LISTS[name];
+    return st[name].map((r,i)=>
+      '<div class="rowcard"><div class="grid2">'+
+      lst.cols.map(c=>'<label class="fld" for="'+name+'-'+i+'-'+c.k+'"><span>'+esc(c.l)+'</span>'+
+        inputHtml(c,name+'-'+i+'-'+c.k,r[c.k],'data-l="'+name+'" data-i="'+i+'" data-f="'+c.k+'"')+'</label>').join('')+
+      '</div><button type="button" class="small del" data-del="'+name+'" data-i="'+i+'">이 줄 삭제</button></div>'
+    ).join('')+'<button type="button" class="small" data-add="'+name+'">'+esc(lst.add)+'</button>';
+  }
+  function renderList(name){const el=$('list-'+name);if(el)el.innerHTML=listHtml(name)}
+
+  function renderAll(){
+    $('asOf').value=st.asOf;
+    $('asOfTxt').textContent=RULES.asOf;
+    $('sections').innerHTML=SECTIONS.map((s,idx)=>{
+      let body='';
+      if(s.fields.length){
+        body+='<div class="grid2">'+s.fields.map(f=>f.full?'<div style="grid-column:1/-1">'+fieldHtml(f,s.w)+'</div>':fieldHtml(f,s.w)).join('')+'</div>';
+      }
+      if(s.check){
+        body+='<label class="chk"><input type="checkbox" id="chk-'+s.check.k+'" data-w="root" data-k="'+s.check.k+'"'+(st[s.check.k]?' checked':'')+'>'+esc(s.check.l)+'</label>';
+      }
+      if(s.list){
+        body+=(s.list!=='todo'?'<p class="hint" style="margin:0"><b>'+esc(LISTS[s.list].label)+'</b></p>':'')+'<div id="list-'+s.list+'" style="display:grid;gap:10px">'+listHtml(s.list)+'</div>';
+      }
+      return '<details class="sec" id="sec-'+s.id+'"'+(idx===0?' open':'')+'><summary>'+esc(s.title)+'<span class="badge" id="badge-'+s.id+'"></span></summary><div class="sbody">'+body+'</div></details>';
+    }).join('');
+    buildJudgeShell();
+    refresh();
+  }
+
+  /* ---- 판정 패널 ---- */
+  const PANELS=[['types','전형별 자격 (혼인신고 전/후)'],['app','신청자 비교 (본인 vs 여자친구)'],['strat','당첨 확률 높이는 전략 (근거 포함)'],['loan','대출 시뮬레이터'],['gift','증여세 계산'],['notice','공고 목록'],['docs','서류 체크리스트'],['rules','규정 데이터와 출처']];
+  function buildJudgeShell(){
+    $('judge').innerHTML=PANELS.map((p,i)=>'<details class="sec" id="jd-'+p[0]+'"'+(i===0?' open':'')+'><summary>'+esc(p[1])+'<span class="badge" id="jb-'+p[0]+'"></span></summary><div class="sbody" id="jb-body-'+p[0]+'"></div></details>').join('');
+  }
+  const mk=m=>'<span class="mk '+m+'">'+MARK[m]+'</span>';
+  const linesHtml=cs=>'<ul class="why">'+cs.map(c=>'<li class="l-'+c.m+'"><span class="d">'+MARK[c.m]+'</span><span>'+esc(c.t)+'</span></li>').join('')+'</ul>';
+  const srcHtml=keys=>keys.length?'<div class="src">'+keys.map(k=>'<a href="'+U[k].u+'" target="_blank" rel="noopener noreferrer">'+esc(U[k].t)+'</a>').join('')+'</div>':'';
+
+  function renderJudge(){
+    const ev=evalTypes(st);
+    let h='';
+    if(ev.rangeUsed)h+='<p class="hint">여자친구 소득이 미입력이라 추정 범위 '+comma(ev.lo)+'~'+comma(ev.hi)+'만 원으로 계산했습니다. 3~12번 섹션에서 연봉이나 총급여를 입력하면 확정값으로 바뀝니다.</p>';
+    h+='<div class="tblwrap"><table class="tbl sumtbl"><thead><tr><th>구분</th>'+ev.rows.map(r=>'<th>'+esc(r.short)+'</th>').join('')+'</tr></thead><tbody>'+
+      ev.summary.table.map(t=>'<tr><th>'+esc(t.label)+'</th>'+t.marks.map((x,j)=>'<td><button type="button" class="mkb" data-pop="'+j+','+t.line+'" aria-expanded="false" aria-controls="pop" aria-label="'+esc(t.label+' '+ev.rows[j].short+' '+MARK[x]+' 이유 보기')+'">'+mk(x)+'</button></td>').join('')+'</tr>').join('')+'</tbody></table></div>'+
+      '<p class="hint">마크를 누르면 이유가 나옵니다(PC는 마우스를 올려도 됩니다). 점이 찍힌 마크가 눌러서 볼 수 있는 칸입니다.</p>'+
+      '<p><span class="pill">가장 유리한 조합</span> 혼인 전: '+esc(ev.summary.textPre)+'<br>혼인 후: '+esc(ev.summary.textPost)+'</p>'+
+      '<p class="hint">– 는 그 줄에서 해당 없는 전형입니다. 확률이 아니라 자격 판정 비교입니다. 12번 섹션의 신청자(<b>'+(ev.applicant==='m'?'본인':'여자친구')+'</b>)는 단독 줄 중 어느 쪽을 기본으로 강조할지와, 합산 줄에서 통장·거주를 판정할 사람을 정합니다. 지역우선·통장 이력이 불리한 경우는 ✕가 아니라 △로 표시합니다.</p>';
+    lastEv=ev;
+    ev.rows.forEach(r=>{
+      h+='<div class="jcard"><h3>'+esc(r.label)+'</h3>'+LINES.map(([L,lab])=>{
+        const c=L==='post'?r.post:r.preLines[L];
+        return '<details class="jl" id="jl-'+r.key+'-'+L+'"'+(c.na?'':' open')+'><summary>'+mk(c.m)+'<span>'+esc(lab)+'</span>'+(L===r.focus?'<span class="pill">기본 강조</span>':'')+(c.na?'<span class="pill">해당 없음</span>':'')+'</summary>'+linesHtml(c.checks)+'</details>';
+      }).join('')+'</div>';
+    });
+    h+='<div class="jcard"><h3>신생아·다자녀·노부모부양·기관추천</h3><p class="hint">자녀와 부양 대상이 없어 해당 없음으로 봅니다. 공급 비율은 일반 25%, 신생아 20%, 신혼 10%, 생애최초 15%, 기관추천 15%, 노부모 5%, 다자녀 10%입니다(LH 안내).</p>'+srcHtml(['lh','law6','first'])+'</div>';
+    $('jb-body-types').innerHTML=h;
+    popRefresh();
+    const worstOf=m=>m;
+    $('jb-types').textContent=ev.rows.map(r=>MARK[r.post.m]).join(' ');
+
+    const ac=applicantCompare(st);
+    let a='<div class="tblwrap"><table class="tbl"><thead><tr><th>항목</th><th>본인</th><th>여자친구</th></tr></thead><tbody>'+
+      ac.rows.map(r=>'<tr><th>'+esc(r.label)+'</th><td>'+mk(r.m.m)+' '+esc(r.m.t)+'</td><td>'+mk(r.f.m)+' '+esc(r.f.t)+'</td></tr>').join('')+'</tbody></table></div>'+
+      '<p><span class="pill">종합</span> '+esc(ac.verdict)+'</p>'+
+      '<p class="hint">입력한 거주 이력·저축액·소득세 납부 기간에 따라 어느 명의가 유리한지 자동으로 비교합니다. 소득세 5년 요건은 통산 연수를 넣지 않으면 입사 이후 기간만 계산합니다.</p>';
+    $('jb-body-app').innerHTML=a;
+    $('jb-app').textContent=ac.verdict.slice(0,6);
+
+    const sg=strategies(st);
+    const lvCls={law:'pill',case:'pill warn',infer:'pill no'};
+    const priCls={'상':'pill no','중':'pill warn','하':'pill'};
+    let s='<p class="hint"><b>당첨 확률 숫자는 만들지 않았습니다.</b> 법조타운 공고 전이라 알 수 없는 것: '+sg.unknown.map(esc).join(', ')+'. 아래는 입력한 정보와 근거로 정리한 정성적 전략이며, 근거 표시는 <span class="pill">법령·공고</span> <span class="pill warn">사례·보도</span> <span class="pill no">추정</span> 순으로 믿을 수 있는 정도가 낮아집니다.</p>';
+    s+='<h3 style="margin:14px 0 6px;font-size:15px">전형별 경쟁 구조</h3>'+sg.types.map(t=>'<div class="jcard"><h3>'+esc(t.label)+'</h3>'+
+      '<dl class="kv"><dt>자격(줄별)</dt><dd>'+esc(t.lines)+'</dd><dt>경쟁 방식</dt><dd>'+esc(t.how)+'</dd><dt>참고 사례</dt><dd>'+esc(t.case)+'</dd><dt>판단</dt><dd>'+esc(t.note)+'</dd></dl>'+srcHtml(t.s)+'</div>').join('')+
+      '<h3 style="margin:14px 0 6px;font-size:15px">전략 (우선순위 순)</h3>';
+    sg.items.forEach(it=>{
+      s+='<div class="jcard"><h3><span class="'+priCls[it.pri]+'">우선순위 '+esc(it.pri)+'</span> '+esc(it.title)+'</h3>'+
+        '<p>'+esc(it.why)+'</p>'+
+        '<div class="hd" style="font-weight:600;margin-top:8px">내 상황</div>'+linesHtml(it.now)+
+        '<div class="hd" style="font-weight:600;margin-top:8px">할 일</div><ul class="why">'+it.todo.map(t=>'<li class="l-n"><span class="d">□</span><span>'+esc(t)+'</span></li>').join('')+'</ul>'+
+        '<div class="hd" style="font-weight:600;margin-top:8px">근거</div><ul class="why">'+it.evid.map(e=>'<li class="l-n"><span class="d">·</span><span><span class="'+lvCls[e.lv]+'">'+esc(LV[e.lv])+'</span> '+esc(e.t)+srcHtml(e.s)+'</span></li>').join('')+'</ul>'+
+        '<p class="hint">한계: '+esc(it.caveat)+'</p></div>';
+    });
+    $('jb-body-strat').innerHTML=s;
+    $('jb-strat').textContent='우선 '+sg.items.filter(x=>x.pri==='상').length+'개';
+
+    const L=loanSim(st),D=RULES.didimdol;
+    let l='<dl class="kv">'+
+      '<dt>희망 주택가격</dt><dd>'+manBig(L.price)+(L.priceOk?'':' <span class="pill no">5억 상한 초과</span>')+'</dd>'+
+      '<dt>부대비용</dt><dd>'+manN(L.cost)+'</dd>'+
+      '<dt>자기자금</dt><dd>'+manN(L.fund)+' (예금·투자 '+manN(L.liquid)+' + 지원 '+manN(L.gifts)+')</dd>'+
+      '<dt>필요 대출액</dt><dd><b>'+manN(L.need)+'</b></dd>'+
+      '<dt>신혼 디딤돌 한도</dt><dd>'+manN(L.limit)+(L.short>0?' <span class="pill no">부족 '+manN(L.short)+'</span>':' <span class="pill">한도 안</span>')+'</dd>'+
+      '<dt>월 상환액</dt><dd><b>'+manN(L.pay)+'</b> (금리 '+L.rate+'%, '+L.yrs+'년)</dd>'+
+      '<dt>DSR 대략</dt><dd>'+(L.dsrLo==null?'소득 미입력':(L.dsrLo.toFixed(0)===L.dsrHi.toFixed(0)?L.dsrLo.toFixed(0):L.dsrLo.toFixed(0)+'~'+L.dsrHi.toFixed(0))+'% (연 상환액÷합산 총급여, 은행 규제 한도는 미확인)')+'</dd>'+
+      '</dl>'+
+      '<ul class="why">'+
+      '<li class="l-'+L.mNewly+'"><span class="d">'+MARK[L.mNewly]+'</span><span>혼인 후·예비신혼(3개월 이내 결혼 예정): 합산 총급여 '+L.incRange+' vs 신혼 기준 '+comma(D.newlywed)+'만 원</span></li>'+
+      '<li class="l-'+L.mSingle+'"><span class="d">'+MARK[L.mSingle]+'</span><span>혼인 전 본인 단독 신청: 본인 총급여 '+comma(L.singleInc)+'만 원 vs 생애최초 '+comma(D.firstTime)+'만 원, 일반 '+comma(D.general)+'만 원. 이 경우 한도는 미확인</span></li>'+
+      '<li class="l-'+(L.netOk?'o':'x')+'"><span class="d">'+(L.netOk?'○':'✕')+'</span><span>순자산 '+manBig(L.netAsset)+' vs 기준 '+comma(D.netAsset)+'만 원</span></li>'+
+      '<li class="l-n"><span class="d">–</span><span>2026.10.19부터 보금자리론은 합산소득이 기준을 넘어도 부부 중 1인 소득이 7,000만 원 이하면 이용 가능. 디딤돌 완화 여부는 미확인</span></li>'+
+      '<li class="l-t"><span class="d">△</span><span>청년주택드림 대출은 드림통장 가입 1년 이상·1천만 원 이상 납입이 필요한데 두 분 통장 납입액은 610만 원, 435만 원이라 현재는 미달입니다(통장 종류 확인 필요)</span></li>'+
+      '</ul>'+srcHtml(['r114','kb','tn','pre','bogeum','hana']);
+    $('jb-body-loan').innerHTML=l;
+    $('jb-loan').textContent=manN(L.need);
+
+    const G=giftCalc(st);
+    let g='';
+    if(!G.length)g='<p class="hint">7번 섹션에 가족 지원을 입력하면 계산합니다.</p>';
+    G.forEach(x=>{
+      g+='<div class="jcard"><h3>받는 사람: '+esc(x.to)+' · 지원 합계 '+manN(x.total)+'</h3>'+
+        '<div class="tblwrap"><table class="tbl"><thead><tr><th>시나리오</th><th class="num">공제</th><th class="num">과세표준</th><th class="num">예상 증여세</th></tr></thead><tbody>'+
+        '<tr><th>혼인신고 함(기간 안)</th><td class="num">'+manN(x.basic+x.mDed)+'</td><td class="num">'+manN(x.baseA)+'</td><td class="num"><b>'+manN(x.netA)+'</b></td></tr>'+
+        '<tr><th>혼인신고 없음·기간 밖</th><td class="num">'+manN(x.basic)+'</td><td class="num">'+manN(x.baseB)+'</td><td class="num"><b>'+manN(x.netB)+'</b></td></tr></tbody></table></div>'+
+        '<ul class="why">'+x.rows.map(r=>'<li class="l-'+(r.inWin?'o':'x')+'"><span class="d">'+(r.inWin?'○':'✕')+'</span><span>'+esc(r.who)+' '+manN(r.amt)+' · '+(r.date?'수령 '+fmtMonth(r.date)+', 신고기한 '+(r.deadline?fmtD(r.deadline):'')+(r.inWin?'':' (혼인공제 기간 밖)'):'수령월 미입력, 혼인공제 기간 안으로 가정')+'</span></li>').join('')+'</ul>'+
+        (x.win?'<p class="hint">혼인공제 인정 기간(혼인신고일 전후 2년): '+fmtMonth(x.win.from)+' ~ '+fmtMonth(x.win.to)+'</p>':'<p class="hint">혼인신고 예정월을 입력하면 혼인공제 기간을 계산합니다.</p>')+'</div>';
+    });
+    g+='<ul class="why">'+
+      '<li class="l-n"><span class="d">–</span><span>직계존속 기본공제 5,000만 원은 부모·조부모 증여를 10년간 합산해 적용됩니다. 부모가 이혼했어도 같은 직계존속으로 합산합니다(추정).</span></li>'+
+      '<li class="l-n"><span class="d">–</span><span>혼인공제 1억 원은 혼인신고일 전후 2년, 직계존속 증여만 해당합니다. 결혼식일이 아니라 혼인관계증명서상 신고일 기준입니다.</span></li>'+
+      '<li class="l-n"><span class="d">–</span><span>신고기한은 증여일이 속한 달 말일부터 3개월, 기한 내 자진신고 시 산출세액 3% 공제입니다.</span></li>'+
+      '<li class="l-t"><span class="d">△</span><span>혼인신고 전에 증여를 받아도 신고 후 기한 후 신고로 혼인공제를 적용한 사례가 있으나, 혼인이 불발될 때의 추징 절차는 미확인입니다. 세무사 확인이 필요합니다.</span></li>'+
+      '<li class="l-n"><span class="d">–</span><span>생애최초 취득세 감면: 12억 원 이하, 200만 원 한도(40세 미만 300만 원 확대는 개편안 단계). 감면 후 3년 내 매도·증여·임대 시 추징 가능.</span></li></ul>'+
+      srcHtml(['taxdel','pwc','rate','taxly','acq','acq2']);
+    $('jb-body-gift').innerHTML=g;
+    $('jb-gift').textContent=G.length?manN(G.reduce((a,x)=>a+x.netA,0))+' / '+manN(G.reduce((a,x)=>a+x.netB,0)):'';
+
+    $('jb-body-notice').innerHTML='<p class="hint">확인일 '+RULES.asOf+'. 분양가와 정확한 일정은 입주자 모집공고(LH청약플러스·청약홈) 게시 후 확정됩니다.</p>'+
+      NOTICES.map(n=>'<div class="jcard"><h3>'+esc(n.name)+' <span class="pill'+(n.status==='공고 전'?' warn':'')+(n.status==='접수 종료'?' no':'')+'">'+esc(n.status)+'</span></h3>'+
+        '<dl class="kv"><dt>위치</dt><dd>'+esc(n.loc)+'</dd><dt>유형</dt><dd>'+esc(n.kind)+'</dd><dt>규모</dt><dd>'+esc(n.units)+'</dd><dt>일정</dt><dd>'+esc(n.plan)+'</dd><dt>분양가</dt><dd>'+esc(n.price)+'</dd><dt>참고</dt><dd>'+esc(n.note)+'</dd>'+
+        (n.cands.length?'<dt>전형 후보</dt><dd>'+n.cands.map(c=>'<span class="pill">'+esc(c)+'</span>').join(' ')+'</dd>':'')+'</dl>'+srcHtml(n.s)+'</div>').join('');
+    $('jb-notice').textContent=NOTICES.filter(n=>n.status==='공고 전').length+'건 예정';
+
+    $('jb-body-docs').innerHTML='<p class="hint">일반 안내이며 단지별 공고문의 서류 목록이 우선입니다.</p>'+DOCS.map(d=>'<div class="jcard"><h3>'+esc(d.g)+'</h3><ul class="why">'+d.items.map(i=>'<li class="l-n"><span class="d">□</span><span>'+esc(i[0])+' <span class="src">('+esc(i[1])+')</span></span></li>').join('')+'</ul></div>').join('');
+
+    $('jb-body-rules').innerHTML='<p class="hint">규정 기준일 '+RULES.asOf+'. 코드 상단의 RULES와 RULE_ITEMS 값만 바꾸면 판정이 갱신됩니다. 확인하지 못한 항목은 숫자를 넣지 않았습니다.</p>'+
+      '<div class="tblwrap"><table class="tbl"><thead><tr><th>구분</th><th>내용</th><th>상태</th></tr></thead><tbody>'+RULE_ITEMS.map(r=>'<tr><td>'+esc(r.g)+'</td><td>'+esc(r.l)+srcHtml(r.s)+'</td><td><span class="pill'+(r.st==='미확인'?' no':r.st==='일부'?' warn':'')+'">'+esc(r.st)+'</span></td></tr>').join('')+'</tbody></table></div>';
+    $('jb-rules').textContent=RULE_ITEMS.filter(r=>r.st==='미확인').length+'건 미확인';
+  }
+
+  function refresh(){
+    const p=progress(st);
+    $('barFill').style.width=p.pct+'%';
+    $('barWrap').setAttribute('aria-valuenow',p.pct);
+    $('pctTxt').textContent='입력 '+p.pct+'% ('+p.done+'/'+p.total+'개 항목)';
+    p.secs.forEach(s=>{
+      const b=$('badge-'+s.id);if(!b)return;
+      if(s.id==='todo'){
+        const d=st.todo.filter(t=>t.done).length;
+        b.textContent=d+'/'+st.todo.length+' 완료';b.className='badge'+(st.todo.length&&d===st.todo.length?' done':'');
+      }else if(!s.total){b.textContent='선택';b.className='badge'}
+      else{b.textContent=s.done+'/'+s.total;b.className='badge'+(s.done===s.total?' done':'')}
+    });
+    const c=calc(st);
+    const incTxt=c.incLow===c.incHigh?manBig(c.incLow):comma(c.incLow)+'~'+comma(c.incHigh)+'만 원';
+    $('tiles').innerHTML=
+      '<div class="tile"><small>총자산 (두 분)</small><b>'+esc(manBig(c.assets))+'</b></div>'+
+      '<div class="tile"><small>총부채</small><b>'+esc(manBig(c.debts))+'</b></div>'+
+      '<div class="tile"><small>순자산</small><b>'+(c.net<0?'-':'')+esc(manBig(Math.abs(c.net)))+'</b></div>'+
+      '<div class="tile"><small>합산 연소득(총급여)</small><b>'+esc(incTxt)+'</b><span class="sub">'+(c.fRange?'여자친구 소득은 추정 범위':'입력값 기준')+'</span></div>';
+    clearTimeout(jt);jt=setTimeout(renderJudge,120);
+  }
+  let jt=null;
+  let lastEv=null,popKey=null,popBtn=null;
+
+  /* ---- 마크 팝오버 ---- */
+  function popEl(){
+    let e=$('pop');
+    if(!e){e=document.createElement('div');e.id='pop';e.setAttribute('role','dialog');e.setAttribute('aria-modal','false');e.setAttribute('aria-label','판정 이유');document.body.appendChild(e)}
+    return e;
+  }
+  function popCell(key){
+    if(!lastEv||!key)return null;
+    const [j,L]=key.split(','),r=lastEv.rows[+j];
+    if(!r)return null;
+    return {r,L,c:L==='post'?r.post:r.preLines[L]};
+  }
+  function popHtml(key){
+    const o=popCell(key);if(!o)return '';
+    const {r,L,c}=o,lab=LINES.find(x=>x[0]===L)[1];
+    const bad=c.checks.filter(x=>x.m==='x'||x.m==='t'),ok=c.checks.filter(x=>x.m==='o');
+    let h='<div class="phd"><b>'+esc(lab+' · '+r.label+' · '+MARK[c.m])+'</b><button type="button" class="pclose" data-popclose="1" aria-label="닫기">×</button></div>';
+    if(c.checks.some(x=>x.t.indexOf('소득 추정 범위에 따라 갈림')>=0))h+='<p class="pnote">추정 범위에 따라 갈림</p>';
+    const exHtml=x=>{
+      const ex=explain(x);
+      if(!ex)return linesHtml([x]);
+      let t='<div class="ex l-'+x.m+'"><p class="exh"><span class="d">'+MARK[x.m]+'</span><b>'+esc(ex.h)+'</b></p>';
+      t+='<div class="exs">쉬운 설명</div><p>'+esc(ex.e)+'</p>';
+      if(ex.c)t+='<div class="exs">바꿀 수 있는 것</div><p>'+esc(ex.c)+'</p>';
+      t+='<div class="exs">근거</div><div class="src">'+ex.s.map(k=>U[k]?'<a href="'+U[k].u+'" target="_blank" rel="noopener noreferrer">'+esc(U[k].t)+'</a>':'').join('')+(ex.u?'<span class="pill warn">미확인</span> '+esc(ex.uNote):'')+'</div></div>';
+      return t;
+    };
+    if(c.na)h+=exHtml(c.checks[0]);
+    else{
+      h+=bad.length?bad.map(exHtml).join(''):'<p class="hint" style="margin:0 0 6px">✕·△ 항목이 없습니다.</p>';
+      if(ok.length)h+='<details><summary>충족한 항목 '+ok.length+'개 보기</summary>'+ok.map(exHtml).join('')+'</details>';
+    }
+    h+='<button type="button" class="pgo" data-popgo="jl-'+r.key+'-'+L+'">자세히 보기</button>';
+    return h;
+  }
+  function placePop(){
+    const e=popEl();if(!popBtn||!popKey)return;
+    const vw=document.documentElement.clientWidth,vh=window.innerHeight;
+    const w=Math.min(vw-32,340);
+    e.style.width=w+'px';e.style.maxHeight=Math.floor(vh*0.7)+'px';
+    const b=popBtn.getBoundingClientRect();
+    let left=Math.min(Math.max(16,b.left+b.width/2-w/2),vw-w-16);
+    e.style.left=left+'px';
+    const h=e.offsetHeight,below=vh-b.bottom-8,above=b.top-8;
+    let top=below>=h||below>=above?b.bottom+6:b.top-h-6;
+    top=Math.max(8,Math.min(top,vh-h-8));
+    e.style.top=top+'px';
+  }
+  function popOpen(btn){
+    const key=btn.dataset.pop;
+    if(popBtn&&popBtn!==btn)popBtn.setAttribute('aria-expanded','false');
+    popKey=key;popBtn=btn;
+    const e=popEl();e.innerHTML=popHtml(key);e.style.display='block';
+    btn.setAttribute('aria-expanded','true');
+    placePop();
+  }
+  function popClose(){
+    const e=$('pop');if(e)e.style.display='none';
+    if(popBtn)popBtn.setAttribute('aria-expanded','false');
+    popKey=null;popBtn=null;
+  }
+  /* 입력이 바뀌어 표가 다시 그려지면 열려 있던 팝오버를 같은 칸에서 새 내용으로 갱신 */
+  function popRefresh(){
+    if(!popKey)return;
+    const key=popKey,btn=document.querySelector('.mkb[data-pop="'+key+'"]');
+    if(!btn||!popCell(key)){popClose();return}
+    popBtn=btn;btn.setAttribute('aria-expanded','true');
+    popEl().innerHTML=popHtml(key);placePop();
+  }
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('.mkb');
+    if(b){e.preventDefault();popKey===b.dataset.pop?popClose():popOpen(b);return}
+    if(e.target.closest('[data-popclose]')){popClose();return}
+    const go=e.target.closest('[data-popgo]');
+    if(go){
+      const id=go.dataset.popgo;popClose();
+      const jd=$('jd-types');if(jd)jd.open=true;
+      const d=$(id);if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}
+      return;
+    }
+    if(popKey&&!e.target.closest('#pop'))popClose();
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&popKey){const b=popBtn;popClose();if(b)b.focus()}});
+  /* PC: hover, 키보드: focus-visible. 터치는 위 click만 사용 */
+  const canHover=window.matchMedia&&window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  let hoverT=null;
+  if(canHover){
+    document.addEventListener('mouseover',e=>{
+      const b=e.target.closest('.mkb');
+      if(b){clearTimeout(hoverT);if(popKey!==b.dataset.pop)popOpen(b);return}
+      if(e.target.closest('#pop'))clearTimeout(hoverT);
+    });
+    document.addEventListener('mouseout',e=>{
+      if(!popKey)return;
+      const from=e.target.closest('.mkb,#pop'),to=e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('.mkb,#pop');
+      if(from&&!to){clearTimeout(hoverT);hoverT=setTimeout(()=>{if(popBtn&&popBtn.matches(':focus'))return;popClose()},250)}
+    });
+  }
+  document.addEventListener('focusin',e=>{
+    const b=e.target.closest&&e.target.closest('.mkb');
+    if(b&&b.matches(':focus-visible')&&popKey!==b.dataset.pop)popOpen(b);
+  });
+  window.addEventListener('scroll',()=>{if(popKey)popClose()},{passive:true});
+  window.addEventListener('resize',()=>{if(popKey)placePop()});
+
+  let timer=null;
+  function persist(){
+    $('savedAt').textContent='저장 중';
+    clearTimeout(timer);
+    timer=setTimeout(()=>{
+      try{localStorage.setItem(STORE_KEY,JSON.stringify(st));$('savedAt').textContent='저장됨 '+nowStr().slice(11)}
+      catch(e){$('savedAt').textContent='이 기기에 저장할 수 없음. JSON으로 저장하세요'}
+    },300);
+  }
+  function changed(){refresh();persist()}
+
+  function readEl(t){
+    if(t.type==='checkbox')return t.checked;
+    const cl=t.classList;
+    if(cl.contains('num')||cl.contains('int')||cl.contains('dec')){
+      const caret=t.selectionStart||0;
+      const isDec=cl.contains('dec');
+      const re=isDec?/[^\d.]/g:/\D/g;
+      const before=t.value.slice(0,caret).replace(re,'').length;
+      let d=t.value.replace(re,'');
+      if(isDec){const i=d.indexOf('.');if(i>=0)d=d.slice(0,i+1)+d.slice(i+1).replace(/\./g,'')}
+      else d=d.replace(/^0+(?=\d)/,'');
+      t.value=d===''?'':(cl.contains('num')?comma(d):d);
+      try{
+        let pos=0,cnt=0;
+        while(pos<t.value.length&&cnt<before){if(/[\d.]/.test(t.value[pos]))cnt++;pos++}
+        t.setSelectionRange(pos,pos);
+      }catch(e){}
+      return d;
+    }
+    return t.value;
+  }
+
+  document.addEventListener('input',e=>{
+    const t=e.target;
+    if(!t.dataset)return;
+    if(t.dataset.w==='root'){
+      st[t.dataset.k]=readEl(t);changed();
+    }else if(t.dataset.w&&t.dataset.k){
+      const v=readEl(t);
+      store(st,t.dataset.w)[t.dataset.k]=v;
+      if(t.type==='range'){const o=$(t.id+'-out');if(o)o.textContent=comma(num(v))+'만 원'}
+      changed();
+    }else if(t.dataset.l){
+      const row=st[t.dataset.l][+t.dataset.i];if(!row)return;
+      const v=readEl(t);row[t.dataset.f]=v;
+      if(t.dataset.l==='todo'&&t.dataset.f==='done'){t.closest('.todo').classList.toggle('done',v)}
+      changed();
+    }
+  });
+
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.add){
+      const n=t.dataset.add;
+      st[n].push(n==='todo'?{t:'',due:'',done:false}:emptyRow(n));
+      renderList(n);changed();
+      const idx=st[n].length-1,first=n==='todo'?$('todo-'+idx+'-t'):$(n+'-'+idx+'-'+LISTS[n].cols[0].k);
+      if(first)first.focus();
+    }else if(t.dataset.del){
+      const n=t.dataset.del;st[n].splice(+t.dataset.i,1);renderList(n);changed();
+    }
+  });
+
+  function showMsg(id,text,err){const m=$(id);m.textContent=text;m.className='msg'+(err?' err':'')}
+  $('btnBuild').addEventListener('click',()=>{
+    $('outTxt').value=buildMd(st);
+    $('outBox').hidden=false;
+    showMsg('copyMsg','');
+    $('outBox').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  $('btnCopy').addEventListener('click',async()=>{
+    const ta=$('outTxt'),txt=ta.value;
+    try{await navigator.clipboard.writeText(txt);showMsg('copyMsg','복사했습니다. 대화창에 붙여 넣으세요.');return}catch(e){}
+    try{
+      ta.removeAttribute('readonly');ta.focus();ta.select();ta.setSelectionRange(0,txt.length);
+      const ok=document.execCommand('copy');ta.setAttribute('readonly','');
+      if(ok){showMsg('copyMsg','복사했습니다. 대화창에 붙여 넣으세요.');return}
+    }catch(e){}
+    ta.setAttribute('readonly','');ta.focus();ta.select();
+    showMsg('copyMsg','자동 복사가 막혀 있습니다. 위 글을 길게 눌러 전체 선택 후 복사하세요.',true);
+  });
+
+  let downloads=null;
+  (async()=>{try{if(window.claude&&claude.use)downloads=await claude.use('downloads')}catch(e){}})();
+  $('btnSave').addEventListener('click',async()=>{
+    const data=JSON.stringify(st,null,2);
+    const nm=(st.f.nick||'').trim().replace(/[\\/:*?"<>|\s]+/g,'_');
+    const fname='내집마련_'+(nm?nm+'_':'')+todayStr()+'.json';
+    if(downloads){
+      try{await downloads.save({filename:fname,data});showMsg('bkMsg','저장 요청을 보냈습니다.');return}
+      catch(err){if(err&&err.code==='declined'){showMsg('bkMsg','저장을 취소했습니다.',true);return}}
+    }
+    try{await navigator.clipboard.writeText(data);showMsg('bkMsg','파일 저장이 막혀 있어 백업 코드를 복사했습니다. 메모 앱 등에 붙여 두세요.')}
+    catch(e){
+      $('outTxt').value=data;$('outBox').hidden=false;$('outTxt').focus();$('outTxt').select();
+      showMsg('bkMsg','저장과 복사가 모두 막혀 있습니다. 아래 정리본 칸에 백업 코드를 띄웠으니 직접 복사하세요.',true);
+    }
+  });
+  $('btnLoad').addEventListener('click',()=>$('fileIn').click());
+  $('fileIn').addEventListener('change',e=>{
+    const file=e.target.files&&e.target.files[0];if(!file)return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{st=sanitize(JSON.parse(String(r.result)));renderAll();persist();showMsg('bkMsg','불러왔습니다.')}
+      catch(err){showMsg('bkMsg','읽을 수 없는 파일입니다. 이 앱에서 저장한 JSON 파일을 선택하세요.',true)}
+    };
+    r.onerror=()=>showMsg('bkMsg','파일을 읽지 못했습니다.',true);
+    r.readAsText(file);e.target.value='';
+  });
+
+  $('btnReset').addEventListener('click',()=>{
+    $('resetBox').innerHTML='<div class="confirm"><div>입력한 내용을 바꿉니다. 먼저 JSON 파일로 저장해 두면 되돌릴 수 있습니다.</div><div class="btns"><button type="button" class="del" id="rsYes">모두 지우기</button><button type="button" id="rsSeed">알려진 정보로 되돌리기</button><button type="button" id="rsNo">취소</button></div></div>';
+    $('rsNo').onclick=()=>{$('resetBox').innerHTML=''};
+    const apply=(next,msg)=>{
+      st=next;
+      try{localStorage.removeItem(STORE_KEY)}catch(e){}
+      $('resetBox').innerHTML='';$('outBox').hidden=true;
+      renderAll();persist();showMsg('bkMsg',msg);
+    };
+    $('rsYes').onclick=()=>apply(blankState(),'모두 지웠습니다.');
+    $('rsSeed').onclick=()=>apply(sanitize(SEED()),'모두 비웠습니다.');
+    $('rsNo').focus();
+  });
+
+  renderAll();
+})();
+}
+</script>
+</body>
+</html>
