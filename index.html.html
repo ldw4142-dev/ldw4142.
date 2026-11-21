@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정진우 기술사 | 토목구조물 정밀안전진단 & 구조해석 전문가</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Noto Sans KR & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'Inter', 'sans-serif'],
+                        mono: ['Inter', 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#090d16',
+                        },
+                        safety: {
+                            orange: '#f97316',
+                            amber: '#f59e0b',
+                            blue: '#0284c7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-orange-500 selection:text-white">
+
+    <!-- 상단 네비게이션 바 -->
+    <header class="sticky top-0 z-40 bg-navy-900/95 backdrop-blur-md border-b border-slate-800 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- 로고 & 타이틀 -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-bridge text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-tight block leading-none">정진우 구조안전연구소</span>
+                        <span class="text-xs text-slate-400 font-medium">토목구조기술사 · 정밀안전진단 책임기술자</span>
+                    </div>
+                </a>
+
+                <!-- 데스크톱 메뉴 -->
+                <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="#about" class="text-slate-300 hover:text-orange-400 transition-colors py-2">전문가 소개</a>
+                    <a href="#expertise" class="text-slate-300 hover:text-orange-400 transition-colors py-2">주요 수행 분야</a>
+                    <a href="#toolkit" class="text-orange-400 font-bold flex items-center gap-1.5 py-2">
+                        <i class="fa-solid fa-toolbox"></i> 현장 실무 툴킷
+                    </a>
+                    <a href="#projects" class="text-slate-300 hover:text-orange-400 transition-colors py-2">진단 프로젝트</a>
+                    <a href="#resources" class="text-slate-300 hover:text-orange-400 transition-colors py-2">기준 자료실</a>
+                </nav>
+
+                <!-- CTA & 모바일 메뉴 버튼 -->
+                <div class="flex items-center space-x-3">
+                    <a href="#contact" class="hidden sm:inline-flex items-center px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold shadow-sm transition-all">
+                        <i class="fa-solid fa-paper-plane mr-2 text-xs"></i>진단/자문 의뢰
+                    </a>
+                    <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-300 hover:bg-slate-800 focus:outline-none" aria-label="메뉴 열기">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 모바일 드롭다운 메뉴 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-navy-900 border-t border-slate-800 px-4 pt-2 pb-4 space-y-1">
+            <a href="#about" class="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">전문가 소개</a>
+            <a href="#expertise" class="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">주요 수행 분야</a>
+            <a href="#toolkit" class="block px-3 py-2.5 rounded-lg text-base font-bold text-orange-400 bg-slate-800/50">현장 실무 툴킷 (계산기/체크리스트)</a>
+            <a href="#projects" class="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">진단 프로젝트 이력</a>
+            <a href="#resources" class="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-white">기술 자료실</a>
+            <a href="#contact" class="block px-3 py-2.5 mt-2 rounded-lg text-base font-bold text-center bg-orange-500 text-white">진단 및 자문 의뢰하기</a>
+        </div>
+    </header>
+
+    <!-- 1. 히어로 섹션 (업무 대시보드 & 전문가 소개) -->
+    <section id="about" class="relative bg-navy-900 text-white overflow-hidden">
+        <!-- 배경 그리드 패턴 -->
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#94a3b8 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="absolute -right-24 -top-24 w-96 h-96 bg-sky-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute -left-24 bottom-0 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- 좌측: 타이틀 및 철학 -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold text-orange-400">
+                        <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                        <span>시설물의 안전 및 유지관리에 관한 특별법(시설물안전법) 기준 준수</span>
+                    </div>
+                    
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                        데이터와 구조공학으로<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-orange-400">인프라의 생애주기 안전</span>을<br>
+                        정밀하게 진단합니다.
+                    </h1>
+                    
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+                        안녕하십니까. <strong class="text-white">토목구조기술사 정진우</strong>입니다. 18년간 특수교량, 대단면 터널, 수리시설물의 정밀안전진단 및 내하력 평가를 수행해 왔습니다. 육안조사의 한계를 넘어 비파괴 정밀탐사와 3차원 구조해석을 결합하여 가장 합리적인 보수·보강 솔루션을 제시합니다.
+                    </p>
+
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <a href="#toolkit" class="px-6 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/25 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-calculator"></i> 현장 진단 툴킷 바로가기
+                        </a>
+                        <a href="#projects" class="px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-semibold transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-folder-open"></i> 주요 진단 실적 보기
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 우측: 전문가 자격 & 업무 현황 대시보드 카드 -->
+                <div class="lg:col-span-5">
+                    <div class="bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-6">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 text-xl font-bold">
+                                    PE
+                                </div>
+                                <div>
+                                    <h2 class="font-bold text-lg text-white">정 진 우 (Jeong Jin-Woo)</h2>
+                                    <p class="text-xs text-slate-400">국토안전관리원 정밀안전진단 교육 이수 (교량/터널/수리)</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30">
+                                책임기술자
+                            </span>
+                        </div>
+
+                        <!-- 핵심 지표 KPI -->
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <div class="bg-navy-900/80 p-3.5 rounded-xl border border-slate-700/70">
+                                <div class="text-2xl font-extrabold text-sky-400 font-mono">140+</div>
+                                <div class="text-xs text-slate-400 mt-1">정밀안전진단 수행</div>
+                            </div>
+                            <div class="bg-navy-900/80 p-3.5 rounded-xl border border-slate-700/70">
+                                <div class="text-2xl font-extrabold text-orange-400 font-mono">18년</div>
+                                <div class="text-xs text-slate-400 mt-1">구조설계·진단 경력</div>
+                            </div>
+                            <div class="bg-navy-900/80 p-3.5 rounded-xl border border-slate-700/70">
+                                <div class="text-2xl font-extrabold text-emerald-400 font-mono">1·2종</div>
+                                <div class="text-xs text-slate-400 mt-1">전 종별 책임기술자</div>
+                            </div>
+                        </div>
+
+                        <!-- 보유 자격 및 전문 역량 리스트 -->
+                        <div class="space-y-2.5 text-sm">
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/50">
+                                <span class="text-slate-300 flex items-center gap-2"><i class="fa-solid fa-certificate text-orange-400"></i> 국가기술자격</span>
+                                <span class="font-semibold text-white">토목구조기술사 / 건설안전기사</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/50">
+                                <span class="text-slate-300 flex items-center gap-2"><i class="fa-solid fa-laptop-code text-sky-400"></i> 구조해석 S/W</span>
+                                <span class="font-semibold text-white">MIDAS Civil, GTS NX, GeoStudio</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/50">
+                                <span class="text-slate-300 flex items-center gap-2"><i class="fa-solid fa-microscope text-emerald-400"></i> 특화 분야</span>
+                                <span class="font-semibold text-white">재하시험 내하력 평가 · 내진성능평가</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. 주요 수행 분야 (전문 영역 카드) -->
+    <section id="expertise" class="py-16 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-xs font-bold tracking-wider uppercase text-orange-600 bg-orange-100 px-3 py-1 rounded-full">CORE COMPETENCIES</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-navy-900 mt-3">주요 수행 분야 및 전문 기술</h2>
+            <p class="text-slate-600 mt-3 text-sm sm:text-base">
+                시설물안전법 세부지침에 의거한 과학적 상태평가와 정밀 구조해석을 통해 시설물의 안전성을 객관적으로 검증합니다.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- 카드 1: 교량 및 터널 -->
+            <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm hover:shadow-xl hover:border-sky-300 transition-all group">
+                <div class="w-14 h-14 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-sky-600 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-archway"></i>
+                </div>
+                <h3 class="text-xl font-bold text-navy-900 mb-3">교량 및 터널 정밀안전진단</h3>
+                <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                    특수교량(현수·사장교), PSC박스거더교 및 대단면 도로·철도터널의 물리적·기능적 결함을 정밀 조사하고 구조적 안전성을 평가합니다.
+                </p>
+                <ul class="space-y-2 text-sm text-slate-700 border-t border-slate-100 pt-4">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1"></i><span>상·하부구조 외관조사망도 작성 및 결함 분석</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1"></i><span>비파괴시험(반발경도, 초음파, 철근탐사, 탄산화)</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1"></i><span>정·동적 재하시험 및 공용 내하력(DB-24) 산정</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-sky-600 mt-1"></i><span>터널 라이닝 배면 공동 GPR 탐사 및 누수 원인 분석</span></li>
+                </ul>
+            </div>
+
+            <!-- 카드 2: 수리시설물 및 옹벽/사면 -->
+            <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm hover:shadow-xl hover:border-orange-300 transition-all group">
+                <div class="w-14 h-14 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-water"></i>
+                </div>
+                <h3 class="text-xl font-bold text-navy-900 mb-3">수리시설물 및 옹벽·사면 점검</h3>
+                <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                    다목적댐, 저수지, 하천 제방 및 대규모 절토사면·보강토옹벽의 지반공학적 안정성과 수리학적 안전성을 종합 검토합니다.
+                </p>
+                <ul class="space-y-2 text-sm text-slate-700 border-t border-slate-100 pt-4">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-orange-500 mt-1"></i><span>제체 누수·파이핑 현상 및 수중부 드론/ROV 조사</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-orange-500 mt-1"></i><span>옹벽 전도·활동·지지력 안정성 검토 및 변위 계측</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-orange-500 mt-1"></i><span>절토사면 불연속면(절리) 분석 및 한계평형해석</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-orange-500 mt-1"></i><span>계측데이터(경사계, 간극수압계) 시계열 추이 분석</span></li>
+                </ul>
+            </div>
+
+            <!-- 카드 3: 구조해석 및 보수·보강 설계 -->
+            <div class="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all group">
+                <div class="w-14 h-14 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-compass-drafting"></i>
+                </div>
+                <h3 class="text-xl font-bold text-navy-900 mb-3">구조해석 및 보수·보강 설계</h3>
+                <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                    진단 결과 도출된 결함 및 내하력 부족 구간에 대해 3차원 유한요소해석(FEM)을 수행하고 경제적인 보강공법을 설계합니다.
+                </p>
+                <ul class="space-y-2 text-sm text-slate-700 border-t border-slate-100 pt-4">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-600 mt-1"></i><span>MIDAS Civil 기반 3D 정밀 구조해석 및 안전성 평가</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-600 mt-1"></i><span>기존 시설물 내진성능평가 및 내진보강 설계</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-600 mt-1"></i><span>부재별 상태평가 등급 산정 및 종합 안전등급 판정</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-600 mt-1"></i><span>탄소섬유보강, 외부강선 긴장, 단면복구 공법 비교 검토</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 현장 업무용 실무 툴킷 (인터랙티브 계산기 및 체크리스트 탭) -->
+    <section id="toolkit" class="py-16 lg:py-20 bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <span class="text-xs font-bold tracking-wider uppercase text-orange-400 bg-orange-500/10 border border-orange-500/30 px-3 py-1 rounded-full">
+                        FIELD ENGINEERING TOOLKIT
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-3">현장 업무용 실무 툴킷</h2>
+                    <p class="text-slate-400 mt-2 text-sm sm:text-base">
+                        현장 점검 및 내업 검토 시 즉시 활용할 수 있는 간이 계산기와 필수 점검 체크리스트입니다.
+                    </p>
+                </div>
+                <div class="text-xs text-slate-400 bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">
+                    <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i> 국토안전관리원 안전점검 및 정밀안전진단 세부지침 기준 준용
+                </div>
+            </div>
+
+            <!-- 툴킷 탭 버튼 -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 bg-slate-800/80 p-2 rounded-2xl border border-slate-700">
+                <button onclick="switchToolTab('grade-calc')" id="tab-grade-calc" class="tool-tab-btn active flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-xl font-bold text-sm transition-all bg-orange-500 text-white shadow-md">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <span>1. 결함도 점수 & 안전등급 판정</span>
+                </button>
+                <button onclick="switchToolTab('rebound-calc')" id="tab-rebound-calc" class="tool-tab-btn flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-xl font-bold text-sm transition-all text-slate-300 hover:bg-slate-700/60">
+                    <i class="fa-solid fa-hammer"></i>
+                    <span>2. 슈미트해머 압축강도 추정</span>
+                </button>
+                <button onclick="switchToolTab('checklist')" id="tab-checklist" class="tool-tab-btn flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-xl font-bold text-sm transition-all text-slate-300 hover:bg-slate-700/60">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <span>3. 현장 점검 체크리스트 & 메모</span>
+                </button>
+            </div>
+
+            <!-- 탭 1: 안전등급 판정 시뮬레이터 -->
+            <div id="panel-grade-calc" class="tool-panel bg-slate-800/60 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- 좌측 입력 폼 -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-orange-400"></i> 주요 결함 항목 입력 (RC 교량 바닥판/거더 기준 간이평가)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">현장 조사된 최대 균열폭, 열화 면적률, 구조안전성(내하력)을 입력하여 상태평가 등급을 시뮬레이션합니다.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <!-- 균열폭 -->
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                                <label class="block text-xs font-semibold text-slate-300 mb-2">
+                                    1방향/망상 최대 균열폭 (mm)
+                                </label>
+                                <select id="crack-width" onchange="calculateSafetyGrade()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                                    <option value="0.10">0.1mm 미만 (미세균열 - a등급)</option>
+                                    <option value="0.20" selected>0.1mm ~ 0.3mm 미만 (b등급)</option>
+                                    <option value="0.40">0.3mm ~ 0.5mm 미만 (c등급)</option>
+                                    <option value="0.70">0.5mm ~ 1.0mm 미만 (d등급)</option>
+                                    <option value="1.20">1.0mm 이상 관통균열 (e등급)</option>
+                                </select>
+                            </div>
+
+                            <!-- 박리/박락 및 철근노출 -->
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                                <label class="block text-xs font-semibold text-slate-300 mb-2">
+                                    박리·박락 및 철근노출 면적률 (%)
+                                </label>
+                                <select id="spalling-rate" onchange="calculateSafetyGrade()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                                    <option value="0" selected>결함 없음 (a등급)</option>
+                                    <option value="1.5">2% 미만 국부 박리 (b등급)</option>
+                                    <option value="5.0">2% ~ 10% 미만 / 철근노출 2% 미만 (c등급)</option>
+                                    <option value="15.0">10% 이상 / 철근부식 단면손실 (d등급)</option>
+                                    <option value="25.0">광범위 박락 및 주철근 심각 부식 (e등급)</option>
+                                </select>
+                            </div>
+
+                            <!-- 누수 및 백태 -->
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                                <label class="block text-xs font-semibold text-slate-300 mb-2">
+                                    누수 및 백태 진행 상태
+                                </label>
+                                <select id="leakage-state" onchange="calculateSafetyGrade()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                                    <option value="a">누수 및 백태 없음 (a등급)</option>
+                                    <option value="b" selected>국부 습윤 및 초기 백태 (b등급)</option>
+                                    <option value="c">진행성 누수 및 녹물 용출 (c등급)</option>
+                                    <option value="d">지속적 누수로 인한 콘크리트 열화 심화 (d등급)</option>
+                                </select>
+                            </div>
+
+                            <!-- 공용 내하율 (안전성평가) -->
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                                <label class="block text-xs font-semibold text-slate-300 mb-2">
+                                    안전성평가 (내하율 RF / 안전율)
+                                </label>
+                                <select id="safety-factor" onchange="calculateSafetyGrade()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                                    <option value="1.15" selected>RF ≥ 1.0 (설계하중 충족 - A/B등급)</option>
+                                    <option value="0.95">0.9 ≤ RF < 1.0 (경미한 부족 - C등급)</option>
+                                    <option value="0.80">0.75 ≤ RF < 0.9 (보강 필요 - D등급)</option>
+                                    <option value="0.65">RF < 0.75 (사용제한 검토 - E등급)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 우측 결과 디스플레이 -->
+                    <div class="lg:col-span-5 bg-navy-900 rounded-2xl p-6 border border-slate-700 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">종합 판정 결과 (시뮬레이션)</span>
+                                <span id="defect-score-badge" class="px-2.5 py-1 rounded bg-slate-800 text-sky-400 font-mono text-xs font-bold">결함도 지수: 0.16</span>
+                            </div>
+
+                            <div class="flex items-center gap-5 my-4 p-4 rounded-xl bg-slate-800/70 border border-slate-700">
+                                <div id="grade-letter-box" class="w-20 h-20 rounded-2xl bg-sky-500 text-white flex items-center justify-center text-4xl font-black shadow-lg shrink-0">
+                                    B
+                                </div>
+                                <div>
+                                    <div id="grade-title" class="text-xl font-extrabold text-white">B등급 (양호)</div>
+                                    <p id="grade-desc" class="text-xs text-slate-300 mt-1 leading-relaxed">
+                                        보조부재에 경미한 결함이 발생하였으나 기능 발휘에는 지장이 없으며 내구성 증진을 위하여 일부의 보수가 필요한 상태입니다.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 pt-4 border-t border-slate-800">
+                            <div class="text-xs text-slate-400 flex items-start gap-2">
+                                <i class="fa-solid fa-wrench text-orange-400 mt-0.5"></i>
+                                <span id="grade-action">권고 조치: 표면처리공법(균열실링) 및 신축이음부 방수 정비 권장</span>
+                            </div>
+                            <button onclick="copyGradeResult()" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-600 transition-colors flex items-center justify-center gap-2">
+                                <i class="fa-regular fa-copy"></i> 판정 결과 요약 복사하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 탭 2: 슈미트해머 반발경도 압축강도 추정 계산기 -->
+            <div id="panel-rebound-calc" class="tool-panel hidden bg-slate-800/60 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-7 space-y-5">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-hammer text-orange-400"></i> 반발경도법(슈미트해머 N형) 추정 압축강도 계산기
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">
+                                20점 타격 반발경도 값(쉼표 또는 공백 구분)을 입력하면 이상치(평균 ±20% 초과)를 자동 제거한 후 보정 압축강도를 산출합니다.
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-2">
+                                측정 반발경도 R₀ 입력 (예: 20개 타격값)
+                            </label>
+                            <textarea id="rebound-values" rows="3" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3.5 text-sm font-mono text-white focus:border-orange-500 focus:outline-none" placeholder="38, 40, 39, 42, 37, 41, 39, 38, 40, 41, 36, 39, 40, 42, 38, 39, 41, 40, 38, 39">38, 40, 39, 42, 37, 41, 39, 38, 40, 41, 36, 39, 40, 42, 38, 39, 41, 40, 38, 39</textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">타격 각도 보정</label>
+                                <select id="strike-angle" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white">
+                                    <option value="0" selected>수평 타격 (0°)</option>
+                                    <option value="-4.0">상향 수직 (+90° / 천장)</option>
+                                    <option value="-2.5">상향 경사 (+45°)</option>
+                                    <option value="2.5">하향 경사 (-45°)</option>
+                                    <option value="4.0">하향 수직 (-90° / 바닥)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">재령 계수 (경과년수)</label>
+                                <select id="age-factor" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2.5 text-sm text-white">
+                                    <option value="1.00">1년 미만 (1.00)</option>
+                                    <option value="0.85">3년 경과 (0.85)</option>
+                                    <option value="0.75">5년 경과 (0.75)</option>
+                                    <option value="0.68" selected>10년 경과 (0.68)</option>
+                                    <option value="0.63">20년 이상 (0.63)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">설계기준강도 fck (MPa)</label>
+                                <input type="number" id="design-fck" value="27" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm font-mono text-white">
+                            </div>
+                        </div>
+
+                        <button onclick="calculateReboundStrength()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md transition-all">
+                            <i class="fa-solid fa-calculator mr-2"></i>추정 압축강도 산출하기
+                        </button>
+                    </div>
+
+                    <!-- 우측 산출 결과 -->
+                    <div class="lg:col-span-5 bg-navy-900 rounded-2xl p-6 border border-slate-700 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">비파괴 압축강도 산출 결과 (일본건축학회식 기준)</span>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+                                    <div class="text-xs text-slate-400">보정 반발경도 (R)</div>
+                                    <div id="res-rebound-avg" class="text-2xl font-extrabold text-white font-mono mt-1">39.4</div>
+                                </div>
+                                <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+                                    <div class="text-xs text-slate-400">추정 압축강도 (Fc)</div>
+                                    <div id="res-strength-mpa" class="text-2xl font-extrabold text-sky-400 font-mono mt-1">27.2 MPa</div>
+                                </div>
+                            </div>
+
+                            <div id="strength-status-box" class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm">
+                                <div class="font-bold text-emerald-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-check"></i> 설계기준강도(27.0 MPa) 상회 (100.7%)
+                                </div>
+                                <p class="text-xs text-slate-300 mt-1">
+                                    유효 타격수 20개 모두 허용오차(±20%) 이내이며, 양호한 콘크리트 강도를 확보하고 있습니다.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-800 text-xs text-slate-400">
+                            * 산출식: F₀ = 1.27 × R - 18.0 (MPa) / 재령보정 Fc = F₀ × α
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 탭 3: 현장 점검 체크리스트 & 간편 현장 메모 -->
+            <div id="panel-checklist" class="tool-panel hidden bg-slate-800/60 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- 좌측: 공종별 현장 점검 체크리스트 -->
+                    <div class="lg:col-span-7 space-y-5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-list-check text-orange-400"></i> 현장 외관조사 및 장비 지참 체크리스트
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">현장 출동 전 필수 점검 항목을 체크하여 누락을 방지합니다.</p>
+                            </div>
+                            <span id="checklist-progress" class="px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 font-mono text-xs font-bold border border-sky-500/30">
+                                진행률: 0 / 8 (0%)
+                            </span>
+                        </div>
+
+                        <div id="checklist-items" class="space-y-2.5">
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-colors">
+                                <input type="checkbox" onchange="updateChecklistProgress()" class="w-5 h-5 rounded accent-orange-500 cursor-pointer">
+                                <span class="text-sm text-slate-200">[사전준비] 설계도서, 이전 정밀안전진단 보고서 및 외관조사망도 출력</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-colors">
+                                <input type="checkbox" onchange="updateChecklistProgress()" class="w-5 h-5 rounded accent-orange-500 cursor-pointer">
+                                <input type="hidden">
+                                <span class="text-sm text-slate-200">[안전관리] 교통통제 계획서 확인, 신호수 배치 및 추락방지 안전장구 착용</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-colors">
+                                <input type="checkbox" onchange="updateChecklistProgress()" class="w-5 h-5 rounded accent-orange-500 cursor-pointer">
+                                <span class="text-sm text-slate-200">[상부구조] 주형/바닥판 균열폭(균열게이지), 백태, 박리·박락 및 철근노출 위치 마킹</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-colors">
+                                <input type="checkbox" onchange="updateChecklistProgress()" class="w-5 h-5 rounded accent-orange-500 cursor-pointer">
+                                <span class="text-sm text-slate-200">[받침장치] 탄성받침/포트받침 전단변형, 앵커볼트 풀림, 유간(온도변위) 측정</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-colors">
+                                <input type="checkbox" onchange="updateChecklistProgress()" class="w-5 h-5 rounded accent-orange-500 cursor-pointer">
+                                <span class="text-sm text-slate-200">[신축이음] 후타재 파손, 고무씰 찢어짐 및 하부 교좌장치로의 누수 여부 확인</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-colors">
+                                <input type="checkbox" onchange="updateChecklistProgress()" class="w-5 h-5 rounded accent-orange-500 cursor-pointer">
+                                <span class="text-sm text-slate-200">[하부구조] 교대·교각 부등침하, 수직도, 기초 세굴(수중부) 및 흉벽 균열 조사</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-colors">
+                                <input type="checkbox" onchange="updateChecklistProgress()" class="w-5 h-5 rounded accent-orange-500 cursor-pointer">
+                                <span class="text-sm text-slate-200">[비파괴시험] 반발경도(20점), 초음파전달속도, 피복두께 탐사 및 탄산화 깊이 측정</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-colors">
+                                <input type="checkbox" onchange="updateChecklistProgress()" class="w-5 h-5 rounded accent-orange-500 cursor-pointer">
+                                <span class="text-sm text-slate-200">[사진대지] 전경, 부재별 근접 결함(스케일 자 포함) 및 시험 전경 고해상도 촬영</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 우측: 현장 야장(Field Note) 빠른 메모 -->
+                    <div class="lg:col-span-5 bg-navy-900 rounded-2xl p-6 border border-slate-700 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-white text-base flex items-center gap-2">
+                                    <i class="fa-solid fa-pen-to-square text-sky-400"></i> 디지털 현장 야장 (Field Note)
+                                </h4>
+                                <span class="text-xs text-slate-400">브라우저 자동 저장</span>
+                            </div>
+                            <input type="text" id="note-facility-name" placeholder="시설물명 (예: 한강○○대교 P3~P4 경간)" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:border-sky-500 focus:outline-none">
+                            <textarea id="note-content" rows="9" placeholder="현장 조사 특이사항을 기록하세요.&#10;- P3 교각 코핑부 사인장 균열 (w=0.35mm, L=1.8m)&#10;- A1 교대 탄성받침 전단변형량 18mm 측정&#10;- 배수구 막힘으로 인한 상부 바닥판 백태 진행" class="w-full bg-slate-800 border border-slate-600 rounded-xl p-3.5 text-sm text-slate-200 leading-relaxed focus:border-sky-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="saveFieldNote()" class="flex-1 py-2.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-colors">
+                                <i class="fa-solid fa-floppy-disk mr-1.5"></i>야장 임시저장
+                            </button>
+                            <button onclick="copyFieldNote()" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-600 transition-colors">
+                                <i class="fa-regular fa-copy mr-1.5"></i>클립보드 복사
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 주요 안전진단 프로젝트 수행 이력 (필터링 가능) -->
+    <section id="projects" class="py-16 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div>
+                <span class="text-xs font-bold tracking-wider uppercase text-sky-600 bg-sky-100 px-3 py-1 rounded-full">TRACK RECORD</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-navy-900 mt-3">주요 안전진단 프로젝트 수행 이력</h2>
+                <p class="text-slate-600 mt-2 text-sm sm:text-base">책임기술자 및 분야별 책임기술자로 참여한 대표 시설물 정밀안전진단 사례입니다.</p>
+            </div>
+
+            <!-- 카테고리 필터 버튼 -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterProjects('all')" class="proj-filter-btn active px-4 py-2 rounded-lg text-xs font-bold bg-navy-900 text-white transition-all">전체 (6)</button>
+                <button onclick="filterProjects('bridge')" class="proj-filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition-all">특수·일반교량</button>
+                <button onclick="filterProjects('tunnel')" class="proj-filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition-all">도로·철도터널</button>
+                <button onclick="filterProjects('water')" class="proj-filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition-all">수리·옹벽시설</button>
+            </div>
+        </div>
+
+        <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 프로젝트 1 -->
+            <div class="project-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="bridge">
+                <div>
+                    <div class="bg-gradient-to-r from-navy-900 to-slate-800 p-5 text-white flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-sky-400">1종 시설물 · 특수교량</span>
+                            <h3 class="text-lg font-bold mt-1">○○대교(강박스거더교) 정밀안전진단</h3>
+                        </div>
+                        <span class="px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-bold">안전등급 B</span>
+                    </div>
+                    <div class="p-5 space-y-3 text-sm">
+                        <div class="flex justify-between text-slate-500 text-xs border-b border-slate-100 pb-2">
+                            <span>연장 L = 1,420m (폭원 24.5m)</span>
+                            <span>발주처: 국토관리청</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            강상자형거더 용접부 자분탐상(MT)·초음파탐상(UT) 비파괴검사 및 의사정적·동적 재하시험을 통한 공용 내하력(DB-24) 정밀 평가 수행.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#재하시험</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#강교용접부탐상</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#MIDAS해석</span>
+                </div>
+            </div>
+
+            <!-- 프로젝트 2 -->
+            <div class="project-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="tunnel">
+                <div>
+                    <div class="bg-gradient-to-r from-navy-900 to-slate-800 p-5 text-white flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-orange-400">1종 시설물 · 대단면 터널</span>
+                            <h3 class="text-lg font-bold mt-1">△△산악터널(쌍굴) 정밀안전진단</h3>
+                        </div>
+                        <span class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">안전등급 C</span>
+                    </div>
+                    <div class="p-5 space-y-3 text-sm">
+                        <div class="flex justify-between text-slate-500 text-xs border-b border-slate-100 pb-2">
+                            <span>연장 L = 2,850m (NATM 공법)</span>
+                            <span>발주처: 한국도로공사</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            3D 레이저 스캐닝 기반 라이닝 내공변위 분석, 배면 공동 GPR 탐사 및 종단균열 구간 탄소섬유시트 보강공법 설계.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#GPR공동탐사</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#3D스캐닝</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#보강설계</span>
+                </div>
+            </div>
+
+            <!-- 프로젝트 3 -->
+            <div class="project-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="water">
+                <div>
+                    <div class="bg-gradient-to-r from-navy-900 to-slate-800 p-5 text-white flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-400">1종 시설물 · 수리시설</span>
+                            <h3 class="text-lg font-bold mt-1">□□다목적댐 여수로 및 제체 안전진단</h3>
+                        </div>
+                        <span class="px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-bold">안전등급 B</span>
+                    </div>
+                    <div class="p-5 space-y-3 text-sm">
+                        <div class="flex justify-between text-slate-500 text-xs border-b border-slate-100 pb-2">
+                            <span>제방높이 H = 68m (중력식 콘크리트)</span>
+                            <span>발주처: 한국수자원공사</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            수중 ROV(무인잠수정)를 활용한 상류 사면 및 취수탑 수중부 정밀조사, 침투수량 계측 분석 및 내진성능 재평가 수행.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#수중ROV조사</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#침투류해석</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#내진성능평가</span>
+                </div>
+            </div>
+
+            <!-- 프로젝트 4 -->
+            <div class="project-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="bridge">
+                <div>
+                    <div class="bg-gradient-to-r from-navy-900 to-slate-800 p-5 text-white flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-sky-400">2종 시설물 · PSC박스교</span>
+                            <h3 class="text-lg font-bold mt-1">◇◇고가차도 내진성능평가 및 정밀진단</h3>
+                        </div>
+                        <span class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">안전등급 C</span>
+                    </div>
+                    <div class="p-5 space-y-3 text-sm">
+                        <div class="flex justify-between text-slate-500 text-xs border-b border-slate-100 pb-2">
+                            <span>연장 L = 860m (도심지 고가교)</span>
+                            <span>발주처: 광역시 시설공단</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            비선형 시간이력해석을 통한 교각 내진성능 검증, 탄성받침 노후화 전수조사 및 강판피복 내진보강 상세설계 수행.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#내진보강설계</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#PSC박스교</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#교좌장치교체</span>
+                </div>
+            </div>
+
+            <!-- 프로젝트 5 -->
+            <div class="project-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="water">
+                <div>
+                    <div class="bg-gradient-to-r from-navy-900 to-slate-800 p-5 text-white flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-400">2종 시설물 · 옹벽 및 사면</span>
+                            <h3 class="text-lg font-bold mt-1">☆☆단지 대규모 보강토옹벽 정밀안전점검</h3>
+                        </div>
+                        <span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold">안전등급 D</span>
+                    </div>
+                    <div class="p-5 space-y-3 text-sm">
+                        <div class="flex justify-between text-slate-500 text-xs border-b border-slate-100 pb-2">
+                            <span>최대높이 H = 14.5m / 연장 320m</span>
+                            <span>발주처: 도시개발공사</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            배수불량으로 인한 배부름(Bulging) 구간 지중경사계 계측 및 한계평형해석 수행, 앵커 보강 및 배수공 신설 긴급보강안 수립.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#보강토옹벽</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#사면안정해석</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#긴급보강</span>
+                </div>
+            </div>
+
+            <!-- 프로젝트 6 -->
+            <div class="project-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between" data-category="tunnel">
+                <div>
+                    <div class="bg-gradient-to-r from-navy-900 to-slate-800 p-5 text-white flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-semibold text-orange-400">1종 시설물 · 지하차도</span>
+                            <h3 class="text-lg font-bold mt-1">◎◎복개지하차도 정밀안전진단</h3>
+                        </div>
+                        <span class="px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-bold">안전등급 B</span>
+                    </div>
+                    <div class="p-5 space-y-3 text-sm">
+                        <div class="flex justify-between text-slate-500 text-xs border-b border-slate-100 pb-2">
+                            <span>연장 L = 1,150m (RC 박스구조)</span>
+                            <span>발주처: 시청 도로관리과</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">
+                            신축이음부 누수 및 염화물 침투 깊이 정밀 분석, 슬래브 상부 토피하중 증가에 따른 구조안전성 재검토 및 배면 차수 그라우팅 설계.
+                        </p>
+                    </div>
+                </div>
+                <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#염화물분석</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#배면그라우팅</span>
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded text-xs text-slate-600">#지하차도</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. 기술 자료실 및 법적 기준 요약 -->
+    <section id="resources" class="py-16 bg-slate-100 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-10">
+                <span class="text-xs font-bold tracking-wider uppercase text-orange-600 bg-orange-100 px-3 py-1 rounded-full">ENGINEERING REFERENCE</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-navy-900 mt-3">실무 기준 및 기술 자료실</h2>
+                <p class="text-slate-600 mt-2 text-sm sm:text-base">시설물안전법령에 따른 점검·진단 실시 주기 및 안전등급별 조치 기준 요약표입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 좌측: 시설물 종별 점검/진단 주기표 -->
+                <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                    <h3 class="font-bold text-lg text-navy-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check text-sky-600"></i> 시설물안전법 안전점검 및 정밀안전진단 실시 주기
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-800 text-white">
+                                    <th class="p-3 rounded-tl-lg">구분</th>
+                                    <th class="p-3">A등급 (우수)</th>
+                                    <th class="p-3">B·C등급 (양호·보통)</th>
+                                    <th class="p-3 rounded-tr-lg">D·E등급 (미흡·불량)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3 font-bold text-navy-900">정기안전점검</td>
+                                    <td class="p-3">반기 1회 이상</td>
+                                    <td class="p-3">반기 1회 이상</td>
+                                    <td class="p-3 text-rose-600 font-semibold">1년에 3회 이상</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3 font-bold text-navy-900">정밀안전점검</td>
+                                    <td class="p-3">4년에 1회 이상</td>
+                                    <td class="p-3">3년에 1회 이상</td>
+                                    <td class="p-3 text-rose-600 font-semibold">2년에 1회 이상</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-3 font-bold text-navy-900">정밀안전진단<br><span class="text-xs font-normal text-slate-500">(1종 시설물)</span></td>
+                                    <td class="p-3">6년에 1회 이상</td>
+                                    <td class="p-3">5년에 1회 이상</td>
+                                    <td class="p-3 text-rose-600 font-semibold">4년에 1회 이상</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-3">
+                        * 준공 후 10년이 경과한 1종 시설물은 최초 정밀안전진단을 실시하여야 하며, 건축물은 3·2·1년(정밀점검) 주기를 적용합니다.
+                    </p>
+                </div>
+
+                <!-- 우측: 표준 양식 템플릿 다운로드/복사 카드 -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:border-sky-400 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded">표준 서식</span>
+                                <h4 class="font-bold text-navy-900 mt-1.5">외관조사망도 및 결함물량 집계표 표준폼</h4>
+                                <p class="text-xs text-slate-500 mt-1">균열폭(0.1~1.0mm), 박리, 백태, 철근노출 물량 산출 및 부재별 상태평가 집계 시트</p>
+                            </div>
+                            <button onclick="showToast('표준 집계표 양식 안내가 클립보드에 복사되었습니다.')" class="p-2.5 rounded-lg bg-slate-100 hover:bg-sky-600 hover:text-white text-slate-700 transition-colors" title="양식 정보 복사">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:border-orange-400 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">기술 지침</span>
+                                <h4 class="font-bold text-navy-900 mt-1.5">시설물의 안전 및 유지관리 실시 세부지침 요약</h4>
+                                <p class="text-xs text-slate-500 mt-1">교량·터널·수리시설 편 상태평가 기준표 및 내하력 산정 공식 정리 노트</p>
+                            </div>
+                            <button onclick="showToast('세부지침 핵심 기준 요약이 복사되었습니다.')" class="p-2.5 rounded-lg bg-slate-100 hover:bg-orange-500 hover:text-white text-slate-700 transition-colors" title="지침 요약 복사">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:border-emerald-400 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">과업지시서</span>
+                                <h4 class="font-bold text-navy-900 mt-1.5">정밀안전진단 용역 기술제안서(TP) 표준 목차</h4>
+                                <p class="text-xs text-slate-500 mt-1">과업수행계획, 비파괴시험 및 재하시험 배치계획, 안전관리계획 표준 구성안</p>
+                            </div>
+                            <button onclick="showToast('기술제안서 표준 목차가 복사되었습니다.')" class="p-2.5 rounded-lg bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 transition-colors" title="목차 복사">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. 진단 및 기술 자문 의뢰 섹션 -->
+    <section id="contact" class="py-16 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-navy-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
+            <div class="grid grid-cols-1 lg:grid-cols-12">
+                <!-- 좌측 연락처 및 안내 -->
+                <div class="lg:col-span-5 p-8 sm:p-10 bg-gradient-to-br from-navy-900 to-slate-800 text-white flex flex-col justify-between space-y-8">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-orange-400">CONTACT & CONSULTING</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold mt-2">정밀안전진단 및<br>구조안전 기술 자문 의뢰</h2>
+                        <p class="text-slate-300 text-sm mt-4 leading-relaxed">
+                            시설물 정밀안전진단 용역 참여, 긴급 결함 현장 자문, 보수·보강 공법 심의 및 구조안전성 검토가 필요하시면 언제든 문의해 주십시오.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4 text-sm">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-orange-400">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-400">직통 연락처 (현장/자문 문의)</div>
+                                <div class="font-bold text-white font-mono">010-1234-5678 / 02-555-7890</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-sky-400">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-400">이메일 (설계도서/사진 송부)</div>
+                                <div class="font-bold text-white font-mono">jw.jeong.pe@civil-safety.kr</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-400">사무실 위치</div>
+                                <div class="font-bold text-white">경기도 의정부시 / 서울특별시 강남구</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 우측 자문 신청 폼 -->
+                <div class="lg:col-span-7 p-8 sm:p-10 bg-white">
+                    <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">의뢰인 성함 / 직책 *</label>
+                                <input type="text" required placeholder="예: 김철수 팀장" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">소속 기관 / 회사명 *</label>
+                                <input type="text" required placeholder="예: ○○시청 도로관리과 / △△엔지니어링" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">연락처 *</label>
+                                <input type="tel" required placeholder="010-0000-0000" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">대상 시설물 유형</label>
+                                <select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none bg-white">
+                                    <option>교량 (특수교 / 일반교량 / 육교)</option>
+                                    <option>터널 / 지하차도 / 복개구조물</option>
+                                    <option>댐 / 저수지 / 하천 수리시설</option>
+                                    <option>옹벽 / 절토사면 / 기초구조물</option>
+                                    <option>기타 토목구조물 구조해석·보강자문</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">문의 및 자문 요청 내용 *</label>
+                            <textarea rows="4" required placeholder="시설물 위치, 준공연도, 주요 발생 결함(균열, 누수, 변위 등) 또는 의뢰 목적을 간략히 기재해 주세요." class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:border-orange-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> 기술 자문 및 진단 의뢰 접수하기
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="bg-navy-950 text-slate-400 py-10 border-t border-slate-800 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-bridge text-orange-500"></i>
+                <span class="font-bold text-white">정진우 구조안전연구소</span>
+                <span class="text-slate-600">|</span>
+                <span class="text-xs">토목구조기술사 · 정밀안전진단 책임기술자</span>
+            </div>
+            <div class="text-xs text-slate-500">
+                © 2026 Jeong Jin-Woo Structural Safety Lab. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- 알림 토스트 메시지 박스 (alert() 대체) -->
+    <div id="toast-box" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-navy-900 text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 text-sm font-medium">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+            <span id="toast-message">알림 메시지</span>
+        </div>
+    </div>
+
+    <!-- JavaScript 인터랙티브 로직 -->
+    <script>
+        // 모바일 메뉴 토글
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 모바일 메뉴 링크 클릭 시 메뉴 닫기
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // 커스텀 토스트 메시지 함수 (alert 대체)
+        let toastTimeout;
+        function showToast(msg) {
+            const toastBox = document.getElementById('toast-box');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = msg;
+            toastBox.classList.remove('translate-y-20', 'opacity-0');
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toastBox.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // 클립보드 복사 유틸리티 (execCommand 사용)
+        function copyToClipboard(text, successMsg) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg);
+            } catch (err) {
+                showToast('복사에 실패했습니다. 직접 선택하여 복사해 주세요.');
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // 1. 실무 툴킷 탭 전환 로직
+        function switchToolTab(tabId) {
+            // 모든 패널 숨김
+            document.querySelectorAll('.tool-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            // 모든 버튼 비활성화 스타일
+            document.querySelectorAll('.tool-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-orange-500', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-300', 'hover:bg-slate-700/60');
+            });
+
+            // 선택된 탭 활성화
+            document.getElementById('panel-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.remove('text-slate-300', 'hover:bg-slate-700/60');
+            activeBtn.classList.add('bg-orange-500', 'text-white', 'shadow-md');
+        }
+
+        // 2. 안전등급 판정 시뮬레이터 로직
+        function calculateSafetyGrade() {
+            const crack = parseFloat(document.getElementById('crack-width').value);
+            const spalling = parseFloat(document.getElementById('spalling-rate').value);
+            const leakage = document.getElementById('leakage-state').value;
+            const rf = parseFloat(document.getElementById('safety-factor').value);
+
+            // 결함도 지수 산출 (세부지침 가중치 기반 간이 모델)
+            let crackScore = crack < 0.15 ? 0.1 : (crack < 0.3 ? 0.2 : (crack < 0.5 ? 0.45 : (crack < 1.0 ? 0.75 : 0.95)));
+            let spallScore = spalling === 0 ? 0.1 : (spalling < 2 ? 0.2 : (spalling < 10 ? 0.45 : (spalling < 20 ? 0.75 : 0.95)));
+            let leakScore = leakage === 'a' ? 0.1 : (leakage === 'b' ? 0.2 : (leakage === 'c' ? 0.45 : 0.75));
+
+            // 상태평가 결함도 지수 (가중평균)
+            const defectIndex = (crackScore * 0.45 + spallScore * 0.35 + leakScore * 0.20).toFixed(2);
+            document.getElementById('defect-score-badge').textContent = `결함도 지수: ${defectIndex}`;
+
+            // 상태평가 등급 판정
+            let stateGrade = 'A';
+            if (defectIndex >= 0.79) stateGrade = 'E';
+            else if (defectIndex >= 0.49) stateGrade = 'D';
+            else if (defectIndex >= 0.26) stateGrade = 'C';
+            else if (defectIndex >= 0.13) stateGrade = 'B';
+
+            // 안전성평가 등급 판정
+            let safetyGrade = 'A';
+            if (rf < 0.75) safetyGrade = 'E';
+            else if (rf < 0.90) safetyGrade = 'D';
+            else if (rf < 1.00) safetyGrade = 'C';
+            else safetyGrade = 'B';
+
+            // 종합 안전등급은 상태평가와 안전성평가 중 하위 등급 채택
+            const gradeOrder = { 'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5 };
+            const finalGrade = gradeOrder[stateGrade] >= gradeOrder[safetyGrade] ? stateGrade : safetyGrade;
+
+            // UI 업데이트 데이터
+            const gradeMeta = {
+                'A': {
+                    color: 'bg-emerald-500',
+                    title: 'A등급 (우수)',
+                    desc: '문제점이 없는 최상의 상태입니다. 일상적인 유지관리 및 정기점검을 지속합니다.',
+                    action: '권고 조치: 현 상태 유지 및 정기안전점검(반기 1회) 수행'
+                },
+                'B': {
+                    color: 'bg-sky-500',
+                    title: 'B등급 (양호)',
+                    desc: '보조부재에 경미한 결함이 발생하였으나 기능 발휘에는 지장이 없으며 내구성 증진을 위하여 일부의 보수가 필요한 상태입니다.',
+                    action: '권고 조치: 표면처리공법(균열실링) 및 배수·신축이음부 예방적 보수 권장'
+                },
+                'C': {
+                    color: 'bg-amber-500',
+                    title: 'C등급 (보통)',
+                    desc: '주요부재에 경미한 결함 또는 보조부재에 광범위한 결함이 발생하였으나 전체적인 시설물의 안전에는 지장이 없으며, 주요부재에 내구성·기능성 저하 방지를 위한 보수가 필요한 상태입니다.',
+                    action: '권고 조치: 균열주입공법, 단면복구 및 열화 방지 표면보호공법 시행 필요'
+                },
+                'D': {
+                    color: 'bg-orange-600',
+                    title: 'D등급 (미흡)',
+                    desc: '주요부재에 결함이 발생하여 긴급한 보수·보강이 필요하며 사용제한 여부를 결정하여야 하는 상태입니다.',
+                    action: '권고 조치: 긴급 정밀구조해석 수행, 내하력 보강(외부강선/탄소섬유) 및 중차량 통행제한 검토'
+                },
+                'E': {
+                    color: 'bg-rose-600',
+                    title: 'E등급 (불량)',
+                    desc: '주요부재에 발생한 심각한 결함으로 인하여 시설물의 안전에 위험이 있어 즉각 사용을 금지하고 보강 또는 개축을 하여야 하는 상태입니다.',
+                    action: '권고 조치: 즉시 통행금지(사용제한) 조치, 긴급 가설벤트 설치 및 개축/전면보강 설계 착수'
+                }
+            };
+
+            const info = gradeMeta[finalGrade];
+            const box = document.getElementById('grade-letter-box');
+            box.className = `w-20 h-20 rounded-2xl ${info.color} text-white flex items-center justify-center text-4xl font-black shadow-lg shrink-0 transition-colors`;
+            box.textContent = finalGrade;
+            document.getElementById('grade-title').textContent = info.title;
+            document.getElementById('grade-desc').textContent = info.desc;
+            document.getElementById('grade-action').textContent = info.action;
+        }
+
+        function copyGradeResult() {
+            const title = document.getElementById('grade-title').textContent;
+            const score = document.getElementById('defect-score-badge').textContent;
+            const action = document.getElementById('grade-action').textContent;
+            const summary = `[현장 간이 안전등급 판정 요약]\n- 종합판정: ${title} (${score})\n- ${action}`;
+            copyToClipboard(summary, '안전등급 판정 결과가 클립보드에 복사되었습니다.');
+        }
+
+        // 3. 슈미트해머 반발경도 압축강도 추정 계산기 로직
+        function calculateReboundStrength() {
+            const rawText = document.getElementById('rebound-values').value;
+            const angleOffset = parseFloat(document.getElementById('strike-angle').value);
+            const ageFactor = parseFloat(document.getElementById('age-factor').value);
+            const designFck = parseFloat(document.getElementById('design-fck').value) || 24;
+
+            // 숫자 파싱
+            const values = rawText.split(/[\s,]+/).map(v => parseFloat(v)).filter(v => !isNaN(v) && v > 0);
+            
+            if (values.length < 5) {
+                showToast('최소 5개 이상의 유효한 반발경도 수치를 입력해 주세요.');
+                return;
+            }
+
+            // 1차 평균 산출
+            const initialAvg = values.reduce((a, b) => a + b, 0) / values.length;
+            
+            // 평균 ±20% 초과 이상치 제거
+            const validValues = values.filter(v => v >= initialAvg * 0.8 && v <= initialAvg * 1.2);
+            const finalAvg = validValues.reduce((a, b) => a + b, 0) / validValues.length;
+
+            // 타격 각도 보정된 반발경도 R
+            const correctedR = finalAvg + angleOffset;
+
+            // 일본건축학회식 압축강도 추정식: F0 = 1.27 * R - 18.0 (MPa)
+            const f0 = Math.max(0, 1.27 * correctedR - 18.0);
+            const estimatedFc = f0 * ageFactor;
+            const ratio = ((estimatedFc / designFck) * 100).toFixed(1);
+
+            document.getElementById('res-rebound-avg').textContent = correctedR.toFixed(1);
+            document.getElementById('res-strength-mpa').textContent = `${estimatedFc.toFixed(1)} MPa`;
+
+            const statusBox = document.getElementById('strength-status-box');
+            if (estimatedFc >= designFck) {
+                statusBox.className = 'p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm';
+                statusBox.innerHTML = `
+                    <div class="font-bold text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> 설계기준강도(${designFck.toFixed(1)} MPa) 상회 (${ratio}%)
+                    </div>
+                    <p class="text-xs text-slate-300 mt-1">
+                        총 ${values.length}개 중 유효 타격수 ${validValues.length}개 반영. 양호한 콘크리트 압축강도를 확보하고 있습니다.
+                    </p>
+                `;
+            } else {
+                statusBox.className = 'p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-sm';
+                statusBox.innerHTML = `
+                    <div class="font-bold text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> 설계기준강도(${designFck.toFixed(1)} MPa) 미달 (${ratio}%)
+                    </div>
+                    <p class="text-xs text-slate-300 mt-1">
+                        총 ${values.length}개 중 유효 타격수 ${validValues.length}개 반영. 코어 채취 압축강도 시험 또는 초음파법 병행 검증을 권장합니다.
+                    </p>
+                `;
+            }
+            showToast('추정 압축강도 산출이 완료되었습니다.');
+        }
+
+        // 4. 현장 체크리스트 & 야장 메모 로직
+        function updateChecklistProgress() {
+            const checkboxes = document.querySelectorAll('#checklist-items input[type="checkbox"]');
+            const total = checkboxes.length;
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const percent = Math.round((checked / total) * 100);
+            document.getElementById('checklist-progress').textContent = `진행률: ${checked} / ${total} (${percent}%)`;
+        }
+
+        function saveFieldNote() {
+            const facility = document.getElementById('note-facility-name').value;
+            const content = document.getElementById('note-content').value;
+            try {
+                localStorage.setItem('civil_field_note_facility', facility);
+                localStorage.setItem('civil_field_note_content', content);
+                showToast('현장 야장 메모가 브라우저에 안전하게 저장되었습니다.');
+            } catch (e) {
+                showToast('저장 중 오류가 발생했습니다.');
+            }
+        }
+
+        function copyFieldNote() {
+            const facility = document.getElementById('note-facility-name').value || '미지정 시설물';
+            const content = document.getElementById('note-content').value;
+            const fullText = `[현장 조사 야장 - ${facility}]\n${content}`;
+            copyToClipboard(fullText, '현장 야장 내용이 클립보드에 복사되었습니다.');
+        }
+
+        // 5. 프로젝트 포트폴리오 필터링
+        function filterProjects(category) {
+            // 버튼 스타일 업데이트
+            document.querySelectorAll('.proj-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-navy-900', 'text-white');
+                btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+            });
+            event.target.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+            event.target.classList.add('bg-navy-900', 'text-white');
+
+            // 카드 필터링
+            document.querySelectorAll('.project-card').forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // 6. 자문 의뢰 폼 제출 핸들러
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            showToast('기술 자문 및 정밀안전진단 의뢰가 정상 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.');
+            e.target.reset();
+        }
+
+        // 초기화 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            calculateSafetyGrade();
+            try {
+                const savedFacility = localStorage.getItem('civil_field_note_facility');
+                const savedContent = localStorage.getItem('civil_field_note_content');
+                if (savedFacility) document.getElementById('note-facility-name').value = savedFacility;
+                if (savedContent) document.getElementById('note-content').value = savedContent;
+            } catch (e) {}
+        });
+    </script>
+</body>
+</html>
