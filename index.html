@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>안전진단 작업대</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1c2430;--sub:#5b6676;--line:#d6dce5;--pri:#1f3a5f;--sel:#e6edf6}
+[data-theme=dark]{--bg:#12161c;--card:#1b2129;--ink:#e6eaf0;--sub:#9aa5b5;--line:#2b3440;--pri:#7fa8dc;--sel:#243044}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font:15px/1.5 -apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--ink);display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--pri);color:#fff}
+[data-theme=dark] header{background:#222c39;color:#e6eaf0}
+header h1{font-size:16px;margin:0;flex:1}
+header button{background:rgba(255,255,255,.18);color:inherit;border:0;border-radius:6px;padding:6px 12px;font:inherit;cursor:pointer}
+#menu{display:none}
+.wrap{flex:1;display:flex;min-height:0}
+aside{width:260px;background:var(--card);border-right:1px solid var(--line);overflow:auto;padding:10px;flex-shrink:0}
+aside input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
+.cat{font-size:12px;color:var(--sub);margin:12px 4px 4px;cursor:pointer;user-select:none}
+.item{display:flex;align-items:center;gap:4px;padding:8px 8px;border-radius:8px;cursor:pointer}
+.item:hover{background:var(--bg)}
+.item.on{background:var(--sel);font-weight:600}
+.item .n{flex:1}
+.item .t{font-size:10px;color:var(--sub);border:1px solid var(--line);border-radius:8px;padding:0 5px}
+.item .s{color:var(--sub);padding:0 4px}
+.item .s.f{color:#e0a020}
+section{flex:1;min-width:0;display:flex;flex-direction:column}
+iframe{flex:1;border:0;width:100%;background:var(--bg)}
+.pane{padding:24px;max-width:760px;overflow:auto}
+.pane h2{margin:0 0 4px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;white-space:pre-wrap;word-break:break-all;margin:6px 0}
+.btn{font:inherit;padding:9px 16px;border:1px solid var(--pri);background:var(--pri);color:#fff;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-block}
+[data-theme=dark] .btn{color:#12161c}
+.muted{color:var(--sub);font-size:13px}
+.warn{border-left:3px solid #b7791f;padding:6px 10px;color:var(--sub);font-size:13px;background:var(--bg);border-radius:0 6px 6px 0}
+code{background:var(--bg);padding:1px 5px;border-radius:4px}
+@media(max-width:760px){
+ #menu{display:inline-block}
+ aside{position:fixed;top:44px;bottom:0;left:0;z-index:5;transform:translateX(-100%);transition:transform .2s;width:80%;max-width:300px;box-shadow:2px 0 10px rgba(0,0,0,.2)}
+ aside.open{transform:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <button id="menu">☰</button>
+  <h1>안전진단 작업대</h1>
+  <button id="theme">☾</button>
+</header>
+<div class="wrap">
+  <aside id="side"><input id="q" placeholder="프로그램 검색"><div id="list"></div></aside>
+  <section id="view"></section>
+</div>
+<script src="programs.js"></script>
+<script>
+const P = window.PROGRAMS || [];
+const K = "wb:_shell:";
+const ld = (k, d) => { try { const v = localStorage.getItem(K + k); return v === null ? d : JSON.parse(v) } catch (e) { return d } };
+const sv = (k, v) => { try { localStorage.setItem(K + k, JSON.stringify(v)) } catch (e) { } };
+let fav = ld("fav", []), closed = ld("closed", []), cur = location.hash.slice(1) || ld("last", ""), theme = ld("theme", "light");
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const TN = { web: "웹", link: "링크", command: "명령" };
+
+function applyTheme() {
+  document.documentElement.dataset.theme = theme; $("#theme").textContent = theme === "dark" ? "☀" : "☾";
+  const f = $("iframe"); if (f && f.contentWindow) f.contentWindow.postMessage({ wbTheme: theme }, "*");
+}
+$("#theme").onclick = () => { theme = theme === "dark" ? "light" : "dark"; sv("theme", theme); applyTheme(); };
+$("#menu").onclick = () => $("#side").classList.toggle("open");
+$("#q").oninput = drawList;
+
+function row(p) {
+  return `<div class="item ${p.id === cur ? "on" : ""}" data-id="${esc(p.id)}"><span class="n">${esc(p.name)}</span><span class="t">${TN[p.type] || p.type}</span><span class="s ${fav.includes(p.id) ? "f" : ""}" data-star="${esc(p.id)}">${fav.includes(p.id) ? "★" : "☆"}</span></div>`;
+}
+function drawList() {
+  const q = $("#q").value.trim().toLowerCase();
+  const L = P.filter(p => !q || (p.name + p.category + (p.desc || "")).toLowerCase().includes(q));
+  let h = "";
+  const fv = L.filter(p => fav.includes(p.id));
+  if (fv.length) h += `<div class="cat">★ 즐겨찾기</div>` + fv.map(row).join("");
+  [...new Set(L.map(p => p.category || "기타"))].forEach(c => {
+    const open = !closed.includes(c) || q;
+    h += `<div class="cat" data-cat="${esc(c)}">${open ? "▾" : "▸"} ${esc(c)}</div>`;
+    if (open) h += L.filter(p => (p.category || "기타") === c).map(row).join("");
+  });
+  $("#list").innerHTML = h || `<div class="muted" style="padding:8px">등록된 프로그램이 없습니다.</div>`;
+}
+$("#list").onclick = e => {
+  const s = e.target.closest("[data-star]");
+  if (s) { const id = s.dataset.star; fav = fav.includes(id) ? fav.filter(x => x !== id) : [...fav, id]; sv("fav", fav); drawList(); return; }
+  const c = e.target.closest("[data-cat]");
+  if (c) { const k = c.dataset.cat; closed = closed.includes(k) ? closed.filter(x => x !== k) : [...closed, k]; sv("closed", closed); drawList(); return; }
+  const it = e.target.closest("[data-id]"); if (it) open(it.dataset.id);
+};
+function open(id) {
+  cur = id; sv("last", id); history.replaceState(null, "", "#" + id); $("#side").classList.remove("open"); drawList(); drawView();
+}
+function copy(t) {
+  const d = () => { const x = document.createElement("div"); x.textContent = "복사됨"; x.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 16px;border-radius:20px"; document.body.appendChild(x); setTimeout(() => x.remove(), 1200) };
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(d, () => fb(t, d)); else fb(t, d);
+}
+function fb(t, d) { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); d() }
+window.copyRun = id => copy(P.find(p => p.id === id).run);
+
+function drawView() {
+  const v = $("#view"), p = P.find(x => x.id === cur);
+  if (!p) {
+    v.innerHTML = `<div class="pane"><h2>프로그램을 선택하세요</h2>
+    <p class="muted">왼쪽 목록에서 프로그램을 고르면 이곳에서 열립니다.</p>
+    ${P.length ? "" : `<div class="box"><b>프로그램 추가 방법</b><ol><li><code>programs/</code> 폴더에 웹 프로그램 html 파일을 넣습니다 (<code>programs/_template.html</code> 복사해서 시작).</li><li><code>programs.js</code> 에 항목을 한 덩어리 추가합니다.</li><li>새로고침하면 목록에 나타납니다.</li></ol></div>`}</div>`;
+    return;
+  }
+  if (p.type === "web") {
+    v.innerHTML = `<iframe src="${esc(p.file)}" title="${esc(p.name)}"></iframe>`;
+    $("iframe").onload = () => $("iframe").contentWindow.postMessage({ wbTheme: theme }, "*");
+  } else if (p.type === "link") {
+    v.innerHTML = `<div class="pane"><h2>${esc(p.name)}</h2><div class="muted">${esc(p.desc)} · v${esc(p.version)}</div>
+    <div class="box"><div class="muted" style="word-break:break-all">${esc(p.url)}</div><p><a class="btn" href="${esc(p.url)}" target="_blank" rel="noopener">새 창에서 열기</a></p></div></div>`;
+  } else {
+    v.innerHTML = `<div class="pane"><h2>${esc(p.name)}</h2><div class="muted">${esc(p.desc)} · v${esc(p.version)}</div>
+    <div class="box"><div class="muted">입력: ${esc(p.in || "-")} → 출력: ${esc(p.out || "-")}</div>
+    <pre>${esc(p.run)}</pre><button class="btn" onclick="copyRun('${esc(p.id)}')">실행 명령 복사</button>
+    ${p.memo ? `<p class="muted">${esc(p.memo)}</p>` : ""}</div>
+    <div class="warn">웹페이지는 PC의 프로그램을 직접 실행할 수 없습니다. 명령을 복사해 해당 프로그램(터미널·AutoCAD·엑셀 등)에서 실행하세요.</div></div>`;
+  }
+}
+applyTheme(); drawList(); drawView();
+</script>
+</body>
+</html>
