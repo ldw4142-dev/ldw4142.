@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>반발경도</title><link rel="stylesheet" href="../common.css"></head>
+<body data-pid="rebound">
+<h1>반발경도</h1><div class="sub">슈미트해머 타격값(20점)을 입력하면 평균 ±20% 초과값을 제외하고 보정 평균을 구합니다.</div>
+
+<div class="card">
+  <label>위치 / 메모<input id="loc" placeholder="예: P1 기둥 남측 / 슬래브 하면"></label>
+  <div id="rd"></div>
+  <div class="row">
+    <label>타격 방향 보정 ΔR<input id="dr" inputmode="decimal" placeholder="0"></label>
+    <label>재령 보정계수<input id="ak" inputmode="decimal" placeholder="1"></label>
+  </div>
+  <div class="note">강도 환산식은 기준마다 다릅니다. 사용하는 지침의 식을 <b>강도 = a × R0 + b</b> 형태로 계수를 입력하세요(비워 두면 R0만 표시). 방향 보정값 ΔR과 재령 보정계수도 지침 표에서 찾아 입력합니다. 제외 4개 초과 시 재시험 대상으로 표시합니다. <span class="tag">계수 확인 필요</span></div>
+  <div class="row">
+    <label>a<input id="ca" inputmode="decimal"></label>
+    <label>b<input id="cb" inputmode="decimal"></label>
+    <label>강도 단위<input id="un" placeholder="MPa"></label>
+  </div>
+  <div class="res" id="res">측정값을 입력하세요</div>
+  <div class="row"><button class="p" id="save">기록 저장</button></div>
+</div>
+<div class="card" id="log"></div>
+
+<script src="../common.js"></script>
+<script>
+let last = null;
+function stat(v) {
+  const m = v.reduce((a, b) => a + b, 0) / v.length;
+  const keep = v.filter(x => Math.abs(x - m) <= 0.2 * m);
+  return { m, keep, ex: v.length - keep.length, m2: keep.length ? keep.reduce((a, b) => a + b, 0) / keep.length : m };
+}
+function calc() {
+  const v = rd.get(), R = WB.$("#res"); last = null;
+  if (v.length < 2) { R.textContent = "측정값을 입력하세요 (" + v.length + "/20)"; return; }
+  const s = stat(v), dr = WB.num(WB.$("#dr").value) || 0, ak = WB.num(WB.$("#ak").value) || 1;
+  const R0 = s.m2 + dr, a = WB.num(WB.$("#ca").value), b = WB.num(WB.$("#cb").value), un = WB.$("#un").value || "";
+  let strength = "", html = `보정 평균 R0 = ${R0.toFixed(2)}`;
+  if (a !== null && b !== null) { const f = (a * R0 + b) * ak; strength = f.toFixed(2); html += `<br>추정강도 ≈ ${strength} ${un}`; }
+  let sub = `${v.length}점 · 1차 평균 ${s.m.toFixed(2)} · 제외 ${s.ex}점`;
+  if (v.length < 20) sub += ` · ⚠ 20점 미만`;
+  if (s.ex > 4) sub += ` · ⚠ 제외 4점 초과: 재시험 필요`;
+  if (a === null || b === null) sub += " · a, b 입력 시 강도 산출";
+  last = [v.length, s.ex, R0.toFixed(2), strength];
+  R.innerHTML = html + `<small>${sub}</small>`;
+}
+const rd = WB.readings(WB.$("#rd"), "r", {
+  label: "타격값 R (Enter로 연속 입력)", max: 20,
+  isEx: (x, all) => { const m = all.reduce((a, b) => a + b, 0) / all.length; return Math.abs(x - m) > 0.2 * m; },
+  onChange: () => calc()
+});
+WB.bind(["loc", "dr", "ak", "ca", "cb", "un"], calc);
+WB.log.mount("#log", ["점수", "제외", "R0", "추정강도"]);
+WB.$("#save").onclick = () => { if (!last) return WB.toast("측정값이 부족합니다"); WB.log.add(last); rd.clear(); };
+calc();
+</script></body></html>

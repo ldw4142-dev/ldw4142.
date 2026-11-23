@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>균열폭</title><link rel="stylesheet" href="../common.css"></head>
+<body data-pid="crackwidth">
+<h1>균열폭</h1><div class="sub">측정값을 하나씩 입력하면 최대·평균과 등급 구간을 보여 줍니다.</div>
+
+<div class="card">
+  <label>위치 / 메모 (기록에 함께 저장)<input id="loc" placeholder="예: P1 거더 하면 / 슬래브 3경간"></label>
+  <div id="rd"></div>
+  <div class="note">등급 경계값은 구조물 종류·환경 조건에 따라 지침마다 다릅니다. 사용하는 세부지침 값을 직접 입력하세요. <span class="tag">경계값 비어 있음</span></div>
+  <div class="row">
+    <label>경계 a (mm)<input id="ba" inputmode="decimal"></label>
+    <label>경계 b (mm)<input id="bb" inputmode="decimal"></label>
+    <label>경계 c (mm)<input id="bc" inputmode="decimal"></label>
+    <label>경계 d (mm)<input id="bd" inputmode="decimal"></label>
+  </div>
+  <div class="muted">균열폭 ≤ a → A, ≤ b → B, ≤ c → C, ≤ d → D, 초과 → E (경계값을 입력한 구간만 판정)</div>
+  <div class="res" id="res">측정값을 입력하세요</div>
+  <div class="row"><button class="p" id="save">기록 저장</button></div>
+</div>
+<div class="card" id="log"></div>
+
+<script src="../common.js"></script>
+<script>
+let last = null;
+function calc() {
+  const v = rd.get();
+  if (!v.length) { WB.$("#res").textContent = "측정값을 입력하세요"; last = null; return; }
+  const max = Math.max(...v), avg = v.reduce((a, b) => a + b, 0) / v.length;
+  const b = ["ba", "bb", "bc", "bd"].map(i => WB.num(WB.$("#" + i).value));
+  const g = ["A", "B", "C", "D", "E"];
+  let grade = "-";
+  if (b.every(x => x !== null)) { let i = 0; while (i < 4 && max > b[i]) i++; grade = g[i]; }
+  else if (b.some(x => x !== null)) grade = "경계값 4개를 모두 입력하세요";
+  else grade = "경계값 입력 필요";
+  last = [v.length, max.toFixed(2), avg.toFixed(2), grade];
+  WB.$("#res").innerHTML = `최대 ${max.toFixed(2)} mm · 평균 ${avg.toFixed(2)} mm<small>${v.length}개 측정 · 최대값 기준 구간: ${grade}</small>`;
+}
+const rd = WB.readings(WB.$("#rd"), "w", { label: "균열폭 측정값 (mm)", unit: "", onChange: () => calc() });
+WB.bind(["loc", "ba", "bb", "bc", "bd"], calc);
+WB.log.mount("#log", ["개수", "최대(mm)", "평균(mm)", "구간"]);
+WB.$("#save").onclick = () => { if (!last) return WB.toast("측정값이 없습니다"); WB.log.add(last); };
+calc();
+</script></body></html>
