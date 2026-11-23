@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>초음파전달속도 강도 추정기</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' };</script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased">
+  <div class="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 space-y-5">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <a href="../index.html" class="h-11 px-4 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-sm font-bold flex items-center">← 작업대 홈</a>
+          <div>
+            <span class="text-xs font-semibold text-slate-500">현장조사·비파괴</span>
+            <h1 class="text-lg sm:text-xl font-bold">📡 초음파전달속도 강도 추정기</h1>
+          </div>
+        </div>
+        <button onclick="window.open(location.href, '_blank')" class="h-11 px-3.5 rounded-lg border border-slate-300 dark:border-slate-700 text-sm font-medium">새 창 열기 ↗</button>
+      </div>
+      <div class="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 text-xs sm:text-sm">
+        ℹ️ <strong>적용 식 (일본건축학회 초음파단독법 제안식):</strong> 전달속도 $V_p = (L / T) \times 1000$ ($\text{m/s}$), 추정 압축강도 $F_c = (219 \cdot V_p - 633) \times 0.098$ ($\text{MPa}$, 단 $V_p$는 $\text{km/s}$)
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-5">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-bold mb-1.5">측정 부재명</label>
+          <input type="text" id="member" value="S1 거더 복부" oninput="calc()" class="w-full h-12 px-4 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800" />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1.5">측정 거리 L (mm)</label>
+          <input type="number" inputmode="decimal" step="1" id="dist" value="300" oninput="calc()" class="w-full h-12 px-4 text-lg font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800" />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1.5">초음파 전달시간 T (μs)</label>
+          <input type="number" inputmode="decimal" step="0.1" id="time" value="71.5" oninput="calc()" class="w-full h-12 px-4 text-lg font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800" />
+        </div>
+      </div>
+
+      <div class="p-5 rounded-xl bg-slate-100 dark:bg-slate-800 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-xl">
+            <p class="text-xs text-slate-500">초음파 전달속도 (Vp)</p>
+            <p id="out-vp" class="text-2xl font-bold mt-1">4,196 m/s</p>
+          </div>
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-xl">
+            <p class="text-xs text-slate-500">품질 판정 참고 (Leslie)</p>
+            <p id="out-grade" class="text-xl font-bold mt-1 text-emerald-600">양호 (Good)</p>
+          </div>
+          <div class="bg-[#1E3A8A] text-white p-4 rounded-xl">
+            <p class="text-xs text-blue-200">추정 압축강도 (Fc)</p>
+            <p id="out-fc" class="text-2xl font-extrabold mt-0.5">28.0 MPa</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
+          <button onclick="copyResult()" class="h-12 px-4 rounded-lg bg-[#1E3A8A] text-white font-semibold text-sm">📋 보고서용 결과 복사</button>
+          <button onclick="downloadCSV()" class="h-12 px-4 rounded-lg bg-emerald-700 text-white font-semibold text-sm">📥 엑셀(CSV) 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if (localStorage.getItem('wb_dark') === 'true') document.documentElement.classList.add('dark');
+    const KEY = 'tool_ultrasonic_v1';
+
+    function calc() {
+      const member = document.getElementById('member').value;
+      const dist = parseFloat(document.getElementById('dist').value) || 0;
+      const time = parseFloat(document.getElementById('time').value) || 0;
+
+      const vp = time > 0 ? (dist / time) * 1000 : 0; // m/s
+      const vpKm = vp / 1000;
+      const fc = vpKm > 0 ? Math.max(0, (219 * vpKm - 633) * 0.098) : 0;
+
+      let grade = '불량 (Poor)';
+      if (vp >= 4500) grade = '매우 양호 (Excellent)';
+      else if (vp >= 3500) grade = '양호 (Good)';
+      else if (vp >= 3000) grade = '보통 (Questionable)';
+
+      document.getElementById('out-vp').textContent = Math.round(vp).toLocaleString() + ' m/s';
+      document.getElementById('out-grade').textContent = grade;
+      document.getElementById('out-fc').textContent = fc.toFixed(1) + ' MPa';
+
+      localStorage.setItem(KEY, JSON.stringify({ member, dist, time }));
+      window._last = { member, dist, time, vp, grade, fc };
+    }
+
+    function copyResult() {
+      const x = window._last;
+      navigator.clipboard.writeText(`[초음파 강도추정] 부재: ${x.member} | 거리: ${x.dist}mm | 시간: ${x.time}μs | 속도 Vp: ${Math.round(x.vp)}m/s | 추정강도 Fc: ${x.fc.toFixed(1)} MPa`);
+      alert('보고서용 텍스트가 복사되었습니다.');
+    }
+
+    function downloadCSV() {
+      const x = window._last;
+      const csv = `\uFEFF부재명,측정거리(mm),전달시간(us),전달속도(m/s),품질판정,추정강도(MPa)\n${x.member},${x.dist},${x.time},${Math.round(x.vp)},${x.grade},${x.fc.toFixed(1)}`;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+      a.download = `초음파강도_${x.member}.csv`;
+      a.click();
+    }
+
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (saved) {
+      document.getElementById('member').value = saved.member;
+      document.getElementById('dist').value = saved.dist;
+      document.getElementById('time').value = saved.time;
+    }
+    calc();
+  </script>
+</body>
+</html>
