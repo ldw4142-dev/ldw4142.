@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="건설기술 엔지니어링 개인 업무 포털">
+<title>Engineering Hub | 개인 업무 포털</title>
+<style>
+:root{--navy:#14283d;--blue:#245477;--bg:#f3f6fa;--ink:#1d2938;--muted:#65758a;--line:#e4eaf1;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Sans KR",sans-serif;line-height:1.55}
+header{background:linear-gradient(120deg,#14283d,#244d6b);color:white;padding:30px max(22px,calc((100% - 1120px)/2)) 34px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-weight:800;letter-spacing:.08em}.tag{font-size:12px;border:1px solid #6b879f;border-radius:30px;padding:5px 10px;color:#dce8f2}
+h1{font-size:clamp(30px,5vw,46px);margin:34px 0 8px;letter-spacing:-.04em}.sub{color:#d0dce7;margin:0}
+main{max-width:1120px;margin:0 auto;padding:28px 22px 60px}.welcome{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:20px}.welcome h2{margin:0;font-size:22px}.welcome p{margin:5px 0 0;color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:21px;min-height:175px;box-shadow:0 4px 16px #19365308;transition:.18s}.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px #19365312}
+.icon{width:42px;height:42px;border-radius:12px;background:#eaf1f7;display:grid;place-items:center;font-size:21px;margin-bottom:14px}.card h3{margin:0 0 6px;font-size:17px}.card p{margin:0;color:var(--muted);font-size:13px}.pill{display:inline-block;margin-top:15px;font-size:11px;color:#315b7c;background:#edf4f9;border-radius:20px;padding:4px 9px}
+.section{margin-top:34px}.section h2{font-size:19px;margin:0 0 13px}.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.quick a{background:white;border:1px solid var(--line);padding:15px 17px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:650}.quick a span{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:3px}
+.note{background:#fff;border:1px dashed #cbd7e2;border-radius:14px;padding:17px;color:var(--muted);font-size:13px}
+footer{text-align:center;padding:22px;color:#8391a1;font-size:12px}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.welcome{display:block}.quick{grid-template-columns:1fr}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.card{min-height:145px}header{padding-top:22px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><div class="brand">▦ ENGINEERING HUB</div><div class="tag">MY WORKSPACE</div></div>
+  <h1>Engineering Workspace</h1>
+  <p class="sub">건설기술 · 시설물 안전점검 · 비파괴시험 · 데이터 분석</p>
+</header>
+<main>
+  <div class="welcome"><div><h2>업무 도구</h2><p>자주 사용하는 계산 및 자료 메뉴를 한곳에서 관리합니다.</p></div></div>
+  <section class="grid">
+    <article class="card"><div class="icon">🧮</div><h3>비파괴시험 계산기</h3><p>반발경도 및 초음파 시험 계산 도구를 추가할 공간입니다.</p><span class="pill">준비 중</span></article>
+    <article class="card"><div class="icon">📊</div><h3>철근탐사 데이터</h3><p>피복두께, 배근간격 및 탐사 결과 정리 도구를 추가합니다.</p><span class="pill">준비 중</span></article>
+    <article class="card"><div class="icon">📁</div><h3>엑셀 업무 도구</h3><p>반복 계산, 데이터 정리 및 파일 처리 도구를 모읍니다.</p><span class="pill">준비 중</span></article>
+    <article class="card"><div class="icon">📚</div><h3>기술자료실</h3><p>설계기준, 세부지침 및 참고자료의 목록을 관리합니다.</p><span class="pill">준비 중</span></article>
+    <article class="card"><div class="icon">🏗️</div><h3>부재별 손상 사례</h3><p>교면포장, 바닥판, 거더, 교대·교각 등 사례를 분류합니다.</p><span class="pill">준비 중</span></article>
+    <article class="card"><div class="icon">🛠️</div><h3>업무 자동화</h3><p>PDF, 사진, 보고서 및 파일 정리 자동화 도구를 연결합니다.</p><span class="pill">준비 중</span></article>
+  </section>
+  <section class="section">
+    <h2>빠른 링크</h2>
+    <div class="quick">
+      <a href="https://www.kalis.or.kr/" target="_blank" rel="noopener">국토안전관리원<span>시설물 안전 및 유지관리 관련 정보</span></a>
+      <a href="https://docs.github.com/pages" target="_blank" rel="noopener">GitHub Pages 안내<span>홈페이지 배포 및 관리 문서</span></a>
+    </div>
+  </section>
+  <section class="section">
+    <h2>자료 관리 안내</h2>
+    <div class="note">현재 버전은 개인 홈페이지의 기본 화면입니다. 실제 시험 계산식이나 기술기준은 공식 근거와 입력 조건을 확인한 뒤 메뉴별로 추가하세요. 회사 내부자료, 도면, 보고서 등은 회사 보안 규정을 확인하고 공개 저장소에 업로드하지 마세요.</div>
+  </section>
+</main>
+<footer>ENGINEERING HUB · Personal Workspace</footer>
+</body>
+</html>
