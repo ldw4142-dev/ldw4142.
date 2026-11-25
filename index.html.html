@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>안전진단 실무 워크벤치 v1.0 | Engineering Workbench</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'Inter', 'sans-serif'],
+                        mono: ['Inter', 'monospace'],
+                    },
+                    colors: {
+                        wb: {
+                            darkBg: '#0b1120',
+                            darkPanel: '#111827',
+                            darkCard: '#1e293b',
+                            darkBorder: '#334155',
+                            accent: '#f97316', // 안전 오렌지
+                            emerald: '#10b981', // 정상/양호 그린
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 dark:bg-wb-darkBg text-slate-800 dark:text-slate-100 antialiased h-screen flex overflow-hidden selection:bg-orange-500 selection:text-white">
+
+    <!-- 모바일 사이드바 백드롭 -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden backdrop-blur-xs"></div>
+
+    <!-- =====================================================================
+         1. 좌측 고정 사이드바 (프로그램 네비게이션 트리)
+         ===================================================================== -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 bg-slate-900 dark:bg-wb-darkPanel text-slate-200 border-r border-slate-800 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shrink-0">
+        
+        <!-- 워크벤치 브랜드 로고 -->
+        <div class="h-16 px-5 flex items-center justify-between border-b border-slate-800 shrink-0">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-compass-drafting text-base"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-sm tracking-tight text-white block">안전진단 실무 워크벤치</span>
+                    <span class="text-[11px] text-orange-400 font-mono font-semibold">WORKBENCH v1.0</span>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white p-1.5">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- 빠른 도구 검색창 -->
+        <div class="p-3.5 border-b border-slate-800 shrink-0">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="tool-search-input" onkeyup="filterTools()" placeholder="프로그램 빠른 검색 (예: 단위, 야장)..." 
+                       class="w-full bg-slate-800/90 border border-slate-700 rounded-lg pl-8 pr-3 py-2 text-xs text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none transition-colors">
+            </div>
+        </div>
+
+        <!-- 대분류 아코디언 메뉴 트리 -->
+        <nav id="sidebar-menu-tree" class="flex-1 overflow-y-auto p-3 space-y-2 text-xs">
+            
+            <!-- 카테고리 01 -->
+            <div class="menu-group">
+                <button onclick="toggleAccordion('cat-01')" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg font-bold text-slate-300 hover:bg-slate-800/80 transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-orange-400"></i>
+                        <span>01. 상태평가 · 결함 산정</span>
+                    </span>
+                    <i id="icon-cat-01" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform"></i>
+                </button>
+                <div id="cat-01" class="mt-1 pl-3 space-y-1 border-l border-slate-800 ml-3">
+                    <button onclick="selectModule('mod-template-sample', '01. 상태평가 · 결함 산정', '표준 모듈 템플릿 (확장용)')" 
+                            data-module="mod-template-sample"
+                            class="menu-item w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center justify-between">
+                        <span>표준 계산기 템플릿 (확장용)</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">TPL</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 카테고리 02 -->
+            <div class="menu-group">
+                <button onclick="toggleAccordion('cat-02')" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg font-bold text-slate-300 hover:bg-slate-800/80 transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-sky-400"></i>
+                        <span>02. 비파괴 · 재료시험</span>
+                    </span>
+                    <i id="icon-cat-02" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform"></i>
+                </button>
+                <div id="cat-02" class="mt-1 pl-3 space-y-1 border-l border-slate-800 ml-3">
+                    <div class="px-3 py-1.5 text-[11px] text-slate-500 italic">추후 계산기 탑재 예정</div>
+                </div>
+            </div>
+
+            <!-- 카테고리 03 -->
+            <div class="menu-group">
+                <button onclick="toggleAccordion('cat-03')" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg font-bold text-slate-300 hover:bg-slate-800/80 transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-emerald-400"></i>
+                        <span>03. 구조검토 · 공학도구</span>
+                    </span>
+                    <i id="icon-cat-03" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform"></i>
+                </button>
+                <div id="cat-03" class="mt-1 pl-3 space-y-1 border-l border-slate-800 ml-3">
+                    <button onclick="selectModule('mod-unit-converter', '03. 구조검토 · 공학도구', '공학용 단위 환산기')" 
+                            data-module="mod-unit-converter"
+                            class="menu-item active w-full text-left px-3 py-2 rounded-lg bg-orange-500/15 text-orange-400 font-semibold border border-orange-500/30 transition-colors flex items-center justify-between">
+                        <span>공학용 단위 환산기</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300 font-mono">RUN</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 카테고리 04 -->
+            <div class="menu-group">
+                <button onclick="toggleAccordion('cat-04')" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg font-bold text-slate-300 hover:bg-slate-800/80 transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-amber-400"></i>
+                        <span>04. 현장 야장 · 체크리스트</span>
+                    </span>
+                    <i id="icon-cat-04" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform"></i>
+                </button>
+                <div id="cat-04" class="mt-1 pl-3 space-y-1 border-l border-slate-800 ml-3">
+                    <button onclick="selectModule('mod-field-note', '04. 현장 야장 · 체크리스트', '현장 디지털 야장 (자동저장)')" 
+                            data-module="mod-field-note"
+                            class="menu-item w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors flex items-center justify-between">
+                        <span>현장 디지털 야장</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono">SAVE</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 카테고리 05 -->
+            <div class="menu-group">
+                <button onclick="toggleAccordion('cat-05')" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg font-bold text-slate-300 hover:bg-slate-800/80 transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-purple-400"></i>
+                        <span>05. 법령 · 기준 데이터</span>
+                    </span>
+                    <i id="icon-cat-05" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform"></i>
+                </button>
+                <div id="cat-05" class="mt-1 pl-3 space-y-1 border-l border-slate-800 ml-3">
+                    <div class="px-3 py-1.5 text-[11px] text-slate-500 italic">주기표 · 조치기준 탑재 예정</div>
+                </div>
+            </div>
+
+        </nav>
+
+        <!-- 사이드바 하단 안내 -->
+        <div class="p-3.5 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between shrink-0">
+            <span>모듈 추가 확장형 아키텍처</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500" title="시스템 정상"></span>
+        </div>
+    </aside>
+
+    <!-- =====================================================================
+         2. 우측 메인 작업 영역 (Header + Main Workbench Canvas)
+         ===================================================================== -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        <!-- 상단 유틸리티 바 (Header) -->
+        <header class="h-16 bg-white dark:bg-wb-darkPanel border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-xs">
+            <div class="flex items-center gap-3 min-w-0">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <!-- 현재 선택된 프로그램 경로 (Breadcrumb) -->
+                <div class="flex items-center gap-2 text-xs sm:text-sm truncate">
+                    <span id="header-cat-name" class="text-slate-400 hidden sm:inline">03. 구조검토 · 공학도구</span>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-400 hidden sm:inline"></i>
+                    <span id="header-mod-name" class="font-bold text-slate-900 dark:text-white truncate">공학용 단위 환산기</span>
+                </div>
+            </div>
+
+            <!-- 우측 퀵 유틸리티 버튼 -->
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="resetCurrentModule()" class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors flex items-center gap-1.5" title="현재 작업 입력값 초기화">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span class="hidden sm:inline">작업 초기화</span>
+                </button>
+                <button onclick="copyCurrentResult()" class="px-3 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5" title="현재 산출 결과 복사">
+                    <i class="fa-regular fa-copy"></i>
+                    <span class="hidden sm:inline">결과 복사</span>
+                </button>
+                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 transition-colors" title="다크모드 / 라이트모드 전환">
+                    <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 메인 워크벤치 캔버스 -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <div class="max-w-6xl mx-auto">
+
+                <!-- =====================================================================
+                     [MODULE 1] 공학용 단위 환산기 (mod-unit-converter)
+                     ===================================================================== -->
+                <section id="mod-unit-converter" class="workbench-module grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- 좌측: 입력 패널 -->
+                    <div class="lg:col-span-6 bg-white dark:bg-wb-darkCard rounded-2xl border border-slate-200 dark:border-wb-darkBorder p-6 shadow-sm space-y-6">
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-orange-500">INPUT PARAMETERS</span>
+                            <h2 class="text-lg font-bold mt-1">공학용 단위 환산 입력</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">수치를 입력하면 SI 단위(kN, MPa)와 공학 단위(tonf, kgf/cm²)가 실시간 양방향 변환됩니다.</p>
+                        </div>
+
+                        <!-- 1. 하중(Force) -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">1. 하중 / 축력 (Force)</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="relative">
+                                    <input type="number" id="unit-kn" oninput="convertUnit('kn')" placeholder="0" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-mono focus:border-orange-500 focus:outline-none">
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">kN</span>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="unit-tonf" oninput="convertUnit('tonf')" placeholder="0" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-3.5 pr-14 py-2.5 text-sm font-mono focus:border-orange-500 focus:outline-none">
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">tonf</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. 응력/강도(Stress) -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">2. 응력 / 압축강도 (Stress & Strength)</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="relative">
+                                    <input type="number" id="unit-mpa" oninput="convertUnit('mpa')" placeholder="0" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-mono focus:border-orange-500 focus:outline-none">
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">MPa</span>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="unit-kgfcm2" oninput="convertUnit('kgfcm2')" placeholder="0" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-3.5 pr-16 py-2.5 text-sm font-mono focus:border-orange-500 focus:outline-none">
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">kgf/cm²</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. 휨모멘트(Moment) -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">3. 휨모멘트 (Bending Moment)</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="relative">
+                                    <input type="number" id="unit-knm" oninput="convertUnit('knm')" placeholder="0" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-3.5 pr-14 py-2.5 text-sm font-mono focus:border-orange-500 focus:outline-none">
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">kN·m</span>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="unit-tonfm" oninput="convertUnit('tonfm')" placeholder="0" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-3.5 pr-16 py-2.5 text-sm font-mono focus:border-orange-500 focus:outline-none">
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">tonf·m</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 우측: 실시간 산출 결과 및 판정 요약 패널 -->
+                    <div class="lg:col-span-6 bg-white dark:bg-wb-darkCard rounded-2xl border border-slate-200 dark:border-wb-darkBorder p-6 shadow-sm flex flex-col justify-between space-y-6">
+                        <div class="space-y-4">
+                            <div class="border-b border-slate-100 dark:border-slate-700 pb-4 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-500">OUTPUT SUMMARY</span>
+                                    <h2 class="text-lg font-bold mt-1">환산 결과 요약 및 보고서 표기</h2>
+                                </div>
+                                <span class="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 text-xs font-mono font-bold">g = 9.80665 m/s²</span>
+                            </div>
+
+                            <div id="unit-result-summary" class="bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 rounded-xl p-4 font-mono text-xs sm:text-sm space-y-2.5 leading-relaxed">
+                                <div class="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800">
+                                    <span class="text-slate-500">하중 환산:</span>
+                                    <span id="sum-force" class="font-bold text-slate-800 dark:text-white">0.00 kN = 0.000 tonf</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800">
+                                    <span class="text-slate-500">응력 환산:</span>
+                                    <span id="sum-stress" class="font-bold text-sky-600 dark:text-sky-400">0.00 MPa = 0.0 kgf/cm²</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-slate-500">모멘트 환산:</span>
+                                    <span id="sum-moment" class="font-bold text-orange-500">0.00 kN·m = 0.000 tonf·m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-1">
+                            <div class="font-bold text-slate-700 dark:text-slate-300"><i class="fa-solid fa-circle-info text-orange-400 mr-1"></i>실무 적용 환산 계수</div>
+                            <p>• 1 tonf = 9.80665 kN (약 10 kN) / 1 MPa = 1 N/mm² ≈ 10.197 kgf/cm²</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =====================================================================
+                     [MODULE 2] 현장 디지털 야장 (mod-field-note)
+                     ===================================================================== -->
+                <section id="mod-field-note" class="workbench-module hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- 좌측: 입력 패널 -->
+                    <div class="lg:col-span-6 bg-white dark:bg-wb-darkCard rounded-2xl border border-slate-200 dark:border-wb-darkBorder p-6 shadow-sm space-y-4">
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4 flex items-center justify-between">
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-orange-500">FIELD LOG INPUT</span>
+                                <h2 class="text-lg font-bold mt-1">현장 조사 야장 기록</h2>
+                            </div>
+                            <span id="note-save-status" class="text-[11px] text-emerald-500 font-semibold"><i class="fa-solid fa-check mr-1"></i>자동 저장됨</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">대상 시설물명</label>
+                                <input type="text" id="fn-facility" oninput="updateFieldNote()" placeholder="예: ○○교 (1종 시설물)" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl px-3.5 py-2 text-sm focus:border-orange-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">조사 일시 / 점검자</label>
+                                <input type="text" id="fn-date" oninput="updateFieldNote()" placeholder="예: 2026-11-25 / 홍길동" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl px-3.5 py-2 text-sm focus:border-orange-500 focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">부재별 결함 및 특이사항 기록</label>
+                            <textarea id="fn-body" rows="9" oninput="updateFieldNote()" placeholder="현장에서 확인한 결함 위치, 균열폭(mm), 연장(m), 사진번호 등을 자유롭게 기록하세요. 입력 즉시 브라우저에 자동 저장됩니다." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl p-3.5 text-sm leading-relaxed focus:border-orange-500 focus:outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 우측: 실시간 미리보기 및 TXT 내보내기 패널 -->
+                    <div class="lg:col-span-6 bg-white dark:bg-wb-darkCard rounded-2xl border border-slate-200 dark:border-wb-darkBorder p-6 shadow-sm flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-500">EXPORT & PREVIEW</span>
+                                <h2 class="text-lg font-bold mt-1">야장 출력 미리보기</h2>
+                            </div>
+
+                            <pre id="fn-preview" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-xs font-mono whitespace-pre-wrap leading-relaxed h-64 overflow-y-auto text-slate-700 dark:text-slate-200"></pre>
+                        </div>
+
+                        <button onclick="downloadFieldNoteTxt()" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-arrow-down"></i> 텍스트 파일(.txt)로 다운로드
+                        </button>
+                    </div>
+                </section>
+
+                <!-- =====================================================================
+                     [새 프로그램 추가 영역 START]
+                     향후 새로운 계산기나 도구를 추가할 때 아래 <section> 블록을 복사하여
+                     id="mod-새이름" 으로 변경하고, 좌측 사이드바 버튼의 selectModule()과 연결하세요.
+                     ===================================================================== -->
+                <section id="mod-template-sample" class="workbench-module hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- 좌측: 표준 입력 패널 -->
+                    <div class="lg:col-span-6 bg-white dark:bg-wb-darkCard rounded-2xl border border-slate-200 dark:border-wb-darkBorder p-6 shadow-sm space-y-5">
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-orange-500">MODULE TEMPLATE</span>
+                            <h2 class="text-lg font-bold mt-1">표준 모듈 입력 패널 (복사·확장용)</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">새로운 안전진단 계산기를 추가할 때 이 2단 그리드 틀을 복제하여 사용합니다.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 text-xs text-slate-500 space-y-2">
+                            <p class="font-bold text-slate-700 dark:text-slate-300">💡 새 프로그램 추가 방법:</p>
+                            <p>1. 좌측 사이드바 메뉴 트리에 <code>selectModule('mod-아이디', '분류명', '프로그램명')</code> 버튼 추가</p>
+                            <p>2. 메인 캔버스에 <code>id="mod-아이디"</code> 섹션 복제 후 계산 로직 연결</p>
+                        </div>
+                    </div>
+
+                    <!-- 우측: 표준 결과 패널 -->
+                    <div class="lg:col-span-6 bg-white dark:bg-wb-darkCard rounded-2xl border border-slate-200 dark:border-wb-darkBorder p-6 shadow-sm space-y-5">
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-500">RESULT & JUDGMENT</span>
+                            <h2 class="text-lg font-bold mt-1">산출 결과 및 안전성 판정 영역</h2>
+                        </div>
+                        <div class="p-6 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-center text-xs text-slate-400">
+                            계산 결과 수치, 상태등급 배지(A~E), 권고 조치사항이 표시되는 영역입니다.
+                        </div>
+                    </div>
+                </section>
+                <!-- [새 프로그램 추가 영역 END] -->
+
+            </div>
+        </main>
+    </div>
+
+    <!-- 알림 토스트 (alert 대체) -->
+    <div id="wb-toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-2.5 text-xs font-semibold">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+            <span id="wb-toast-msg">완료되었습니다.</span>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         JavaScript 워크벤치 코어 컨트롤러
+         ===================================================================== -->
+    <script>
+        let currentModuleId = 'mod-unit-converter';
+
+        // 1. 토스트 알림 메시지
+        let toastTimer;
+        function showToast(msg) {
+            const toast = document.getElementById('wb-toast');
+            document.getElementById('wb-toast-msg').textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2600);
+        }
+
+        // 2. 모바일 사이드바 토글
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            sidebar.classList.toggle('-translate-x-full');
+            backdrop.classList.toggle('hidden');
+        }
+
+        // 3. 대분류 아코디언 메뉴 접기/펼치기
+        function toggleAccordion(catId) {
+            const panel = document.getElementById(catId);
+            const icon = document.getElementById('icon-' + catId);
+            panel.classList.toggle('hidden');
+            icon.classList.toggle('-rotate-90');
+        }
+
+        // 4. 사이드바 프로그램 실시간 검색 필터
+        function filterTools() {
+            const query = document.getElementById('tool-search-input').value.toLowerCase().trim();
+            document.querySelectorAll('.menu-item').forEach(btn => {
+                const text = btn.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    btn.classList.remove('hidden');
+                } else {
+                    btn.classList.add('hidden');
+                }
+            });
+        }
+
+        // 5. 워크벤치 모듈(프로그램) 전환
+        function selectModule(modId, categoryName, moduleName) {
+            currentModuleId = modId;
+
+            // 모든 모듈 숨김 후 선택된 모듈 표시
+            document.querySelectorAll('.workbench-module').forEach(sec => sec.classList.add('hidden'));
+            const targetSec = document.getElementById(modId);
+            if (targetSec) targetSec.classList.remove('hidden');
+
+            // 상단 경로(Header Breadcrumb) 업데이트
+            document.getElementById('header-cat-name').textContent = categoryName;
+            document.getElementById('header-mod-name').textContent = moduleName;
+
+            // 좌측 메뉴 활성화 스타일 업데이트
+            document.querySelectorAll('.menu-item').forEach(btn => {
+                btn.classList.remove('bg-orange-500/15', 'text-orange-400', 'font-semibold', 'border', 'border-orange-500/30');
+                btn.classList.add('text-slate-400');
+            });
+            const activeBtn = document.querySelector(`.menu-item[data-module="${modId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('bg-orange-500/15', 'text-orange-400', 'font-semibold', 'border', 'border-orange-500/30');
+            }
+
+            // 모바일 환경에서는 메뉴 선택 후 사이드바 자동 닫기
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleSidebar();
+                }
+            }
+        }
+
+        // 6. 다크모드 / 라이트모드 전환
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                icon.className = 'fa-solid fa-sun text-sm';
+            } else {
+                icon.className = 'fa-solid fa-moon text-sm';
+            }
+        }
+
+        // 7. 현재 모듈 작업 초기화
+        function resetCurrentModule() {
+            if (currentModuleId === 'mod-unit-converter') {
+                ['unit-kn', 'unit-tonf', 'unit-mpa', 'unit-kgfcm2', 'unit-knm', 'unit-tonfm'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                document.getElementById('sum-force').textContent = '0.00 kN = 0.000 tonf';
+                document.getElementById('sum-stress').textContent = '0.00 MPa = 0.0 kgf/cm²';
+                document.getElementById('sum-moment').textContent = '0.00 kN·m = 0.000 tonf·m';
+                showToast('단위 환산기 입력값이 초기화되었습니다.');
+            } else if (currentModuleId === 'mod-field-note') {
+                document.getElementById('fn-facility').value = '';
+                document.getElementById('fn-date').value = '';
+                document.getElementById('fn-body').value = '';
+                updateFieldNote();
+                showToast('현장 야장 내용이 초기화되었습니다.');
+            } else {
+                showToast('현재 모듈이 초기화되었습니다.');
+            }
+        }
+
+        // 8. 현재 모듈 산출 결과 클립보드 복사
+        function copyCurrentResult() {
+            let textToCopy = '';
+            if (currentModuleId === 'mod-unit-converter') {
+                textToCopy = [
+                    `[공학용 단위 환산 결과]`,
+                    `- ${document.getElementById('sum-force').textContent}`,
+                    `- ${document.getElementById('sum-stress').textContent}`,
+                    `- ${document.getElementById('sum-moment').textContent}`
+                ].join('\n');
+            } else if (currentModuleId === 'mod-field-note') {
+                textToCopy = document.getElementById('fn-preview').textContent;
+            } else {
+                textToCopy = document.getElementById('header-mod-name').textContent;
+            }
+
+            const temp = document.createElement('textarea');
+            temp.value = textToCopy;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast('산출 결과가 클립보드에 복사되었습니다.');
+        }
+
+        // =====================================================================
+        // [모듈별 연산 로직]
+        // =====================================================================
+
+        // (A) 공학용 단위 환산기 로직
+        function convertUnit(source) {
+            const G = 9.80665;
+            if (source === 'kn') {
+                const kn = parseFloat(document.getElementById('unit-kn').value);
+                const tonf = isNaN(kn) ? '' : (kn / G).toFixed(3);
+                document.getElementById('unit-tonf').value = tonf;
+                document.getElementById('sum-force').textContent = `${(kn || 0).toFixed(2)} kN = ${(tonf || 0)} tonf`;
+            } else if (source === 'tonf') {
+                const tonf = parseFloat(document.getElementById('unit-tonf').value);
+                const kn = isNaN(tonf) ? '' : (tonf * G).toFixed(2);
+                document.getElementById('unit-kn').value = kn;
+                document.getElementById('sum-force').textContent = `${(kn || 0)} kN = ${(tonf || 0).toFixed(3)} tonf`;
+            } else if (source === 'mpa') {
+                const mpa = parseFloat(document.getElementById('unit-mpa').value);
+                const kgf = isNaN(mpa) ? '' : (mpa * 10.19716).toFixed(1);
+                document.getElementById('unit-kgfcm2').value = kgf;
+                document.getElementById('sum-stress').textContent = `${(mpa || 0).toFixed(2)} MPa = ${(kgf || 0)} kgf/cm²`;
+            } else if (source === 'kgfcm2') {
+                const kgf = parseFloat(document.getElementById('unit-kgfcm2').value);
+                const mpa = isNaN(kgf) ? '' : (kgf / 10.19716).toFixed(2);
+                document.getElementById('unit-mpa').value = mpa;
+                document.getElementById('sum-stress').textContent = `${(mpa || 0)} MPa = ${(kgf || 0).toFixed(1)} kgf/cm²`;
+            } else if (source === 'knm') {
+                const knm = parseFloat(document.getElementById('unit-knm').value);
+                const tonfm = isNaN(knm) ? '' : (knm / G).toFixed(3);
+                document.getElementById('unit-tonfm').value = tonfm;
+                document.getElementById('sum-moment').textContent = `${(knm || 0).toFixed(2)} kN·m = ${(tonfm || 0)} tonf·m`;
+            } else if (source === 'tonfm') {
+                const tonfm = parseFloat(document.getElementById('unit-tonfm').value);
+                const knm = isNaN(tonfm) ? '' : (tonfm * G).toFixed(2);
+                document.getElementById('unit-knm').value = knm;
+                document.getElementById('sum-moment').textContent = `${(knm || 0)} kN·m = ${(tonfm || 0).toFixed(3)} tonf·m`;
+            }
+        }
+
+        // (B) 현장 디지털 야장 로직 (localStorage 자동저장 & TXT 다운로드)
+        function updateFieldNote() {
+            const facility = document.getElementById('fn-facility').value;
+            const date = document.getElementById('fn-date').value;
+            const body = document.getElementById('fn-body').value;
+
+            const formatted = [
+                `=========================================`,
+                `[안전진단 현장 조사 야장]`,
+                `• 대상 시설물 : ${facility || '(미입력)'}`,
+                `• 조사일/점검자: ${date || '(미입력)'}`,
+                `=========================================`,
+                ``,
+                body || '(기록된 결함 및 특이사항이 없습니다.)'
+            ].join('\n');
+
+            document.getElementById('fn-preview').textContent = formatted;
+
+            try {
+                localStorage.setItem('wb_field_note_v1', JSON.stringify({ facility, date, body }));
+            } catch (e) {}
+        }
+
+        function downloadFieldNoteTxt() {
+            const content = document.getElementById('fn-preview').textContent;
+            const facility = document.getElementById('fn-facility').value.trim() || '현장야장';
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${facility}_조사야장.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('현장 야장 텍스트 파일(.txt)이 다운로드되었습니다.');
+        }
+
+        // 초기 로드 시 저장된 야장 데이터 복원
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                const saved = JSON.parse(localStorage.getItem('wb_field_note_v1'));
+                if (saved) {
+                    document.getElementById('fn-facility').value = saved.facility || '';
+                    document.getElementById('fn-date').value = saved.date || '';
+                    document.getElementById('fn-body').value = saved.body || '';
+                }
+            } catch (e) {}
+            updateFieldNote();
+        });
+    </script>
+</body>
+</html>
